@@ -1,26 +1,27 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:food_delivery/services/auth/auth_service.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:food_delivery/features/auth/presentation/cubits/auth_cubits.dart';
+import 'package:food_delivery/features/auth/presentation/cubits/auth_state.dart';
 import 'package:food_delivery/theme/my_color.dart';
 import 'package:food_delivery/widgets/TextField/my_pass_field.dart';
 import 'package:food_delivery/widgets/TextField/my_text_field.dart';
 import 'package:food_delivery/widgets/my_buton.dart';
 
 class RegisterPage extends StatefulWidget {
-  const RegisterPage({super.key});
+  const RegisterPage({super.key, required this.tooglePages});
+  final void Function() tooglePages;
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  final _authService = AuthService();
   final emailInput = TextEditingController();
   final passwordInput = TextEditingController();
   final retypePasswordInput = TextEditingController();
   final usernameInput = TextEditingController();
   String? errorText;
-  void signUp() async {
+  void signUp() {
     // Check empty fields
     if (usernameInput.text.trim().isEmpty ||
         emailInput.text.isEmpty ||
@@ -48,29 +49,14 @@ class _RegisterPageState extends State<RegisterPage> {
         errorText = 'Passwords do not match';
       });
     } else {
-      try {
-        setState(() {
-          errorText = null;
-        });
-        await _authService.signUp(emailInput.text, passwordInput.text);
-        Navigator.of(context).pop();
-      } on FirebaseAuthException catch (e) {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: const Text('Try again!'),
-              content: Text(e.message!),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Close'),
-                ),
-              ],
-            );
-          },
-        );
-      }
+      context.read<AuthCubits>().signUp(
+        emailInput.text,
+        passwordInput.text,
+        usernameInput.text,
+      );
+      setState(() {
+        errorText = null;
+      });
     }
   }
 
@@ -174,8 +160,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               ),
                               if (errorText != null)
                                 TextSpan(
-                                  text:
-                                      '  • ${errorText!}', // dấu chấm tròn nhỏ ngăn cách
+                                  text: '  • ${errorText!}',
                                   style: const TextStyle(
                                     color: Colors.red,
                                     fontSize: 13,
@@ -189,7 +174,14 @@ class _RegisterPageState extends State<RegisterPage> {
                         MyPassField(controller: retypePasswordInput),
                         const SizedBox(height: 45),
 
-                        MyButon(text: 'SIGN UP', onTap: signUp),
+                        BlocBuilder<AuthCubits, AuthState>(
+                          builder: (context, state) {
+                            final isLoading = state is AuthLoading;
+                            return isLoading
+                                ? MyButon.loading()
+                                : MyButon(text: 'SIGN UP', onTap: signUp);
+                          },
+                        ),
                       ],
                     ),
                   ),
@@ -206,9 +198,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 child: IconButton(
                   icon: const Icon(Icons.arrow_back_ios_new, size: 18),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
+                  onPressed: widget.tooglePages,
                 ),
               ),
             ),

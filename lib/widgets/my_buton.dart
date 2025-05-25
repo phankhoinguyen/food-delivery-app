@@ -3,8 +3,10 @@ import 'package:food_delivery/theme/my_color.dart';
 
 class MyButon extends StatelessWidget {
   const MyButon({super.key, required this.text, required this.onTap});
-  final String text;
-  final void Function() onTap;
+  final String? text;
+  final void Function()? onTap;
+
+  const MyButon.loading({super.key}) : text = null, onTap = null;
 
   @override
   Widget build(BuildContext context) {
@@ -22,13 +24,24 @@ class MyButon extends StatelessWidget {
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
             child: Center(
-              child: Text(
-                text,
-                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                  color: MyColor.headerTextColor,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+              child:
+                  text != null
+                      ? Text(
+                        text!,
+                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          color: MyColor.headerTextColor,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )
+                      : const SizedBox(
+                        width: 20,
+                        height: 20,
+
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      ),
             ),
           ),
         ),

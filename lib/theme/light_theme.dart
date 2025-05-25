@@ -9,6 +9,11 @@ final lightMode = ThemeData(
       fontSize: 30,
       fontWeight: FontWeight.bold,
     ),
+    headlineLarge: GoogleFonts.sen(
+      textStyle: ThemeData.light().textTheme.titleLarge,
+      fontSize: 20,
+      fontWeight: FontWeight.bold,
+    ),
     titleMedium: GoogleFonts.sen(
       textStyle: ThemeData.light().textTheme.titleMedium,
       fontSize: 16,

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:food_delivery/pages/register_page.dart';
-import 'package:food_delivery/services/auth/auth_service.dart';
+import 'package:food_delivery/features/auth/presentation/cubits/auth_cubits.dart';
+import 'package:food_delivery/features/auth/presentation/cubits/auth_state.dart';
 import 'package:food_delivery/theme/my_color.dart';
 import 'package:food_delivery/widgets/TextField/my_pass_field.dart';
 import 'package:food_delivery/widgets/TextField/my_text_field.dart';
@@ -11,31 +12,13 @@ import 'package:food_delivery/widgets/my_check_box.dart';
 class LoginPage extends StatelessWidget {
   final emailInput = TextEditingController();
   final passwordInput = TextEditingController();
-  LoginPage({super.key});
+  final void Function() tooglePages;
+  LoginPage({super.key, required this.tooglePages});
 
   @override
   Widget build(BuildContext context) {
-    final _authService = AuthService();
-    void logIn() async {
-      try {
-        await _authService.signIn(emailInput.text, passwordInput.text);
-      } catch (e) {
-        showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: const Text('Try again!'),
-              content: const Text('Incorrect username or password'),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Close'),
-                ),
-              ],
-            );
-          },
-        );
-      }
+    void logIn() {
+      context.read<AuthCubits>().signIn(emailInput.text, passwordInput.text);
     }
 
     return Scaffold(
@@ -140,7 +123,14 @@ class LoginPage extends StatelessWidget {
                             ),
                           ],
                         ),
-                        MyButon(text: 'LOG IN', onTap: logIn),
+                        BlocBuilder<AuthCubits, AuthState>(
+                          builder: (context, state) {
+                            final isLoading = state is AuthLoading;
+                            return isLoading
+                                ? MyButon.loading()
+                                : MyButon(text: 'LOG IN', onTap: logIn);
+                          },
+                        ),
                         const SizedBox(height: 38),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -153,13 +143,7 @@ class LoginPage extends StatelessWidget {
                               ),
                             ),
                             InkWell(
-                              onTap: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => const RegisterPage(),
-                                  ),
-                                );
-                              },
+                              onTap: tooglePages,
                               child: Text(
                                 'SIGN UP',
                                 style: Theme.of(context).textTheme.bodyLarge!
