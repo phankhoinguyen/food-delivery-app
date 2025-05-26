@@ -28,23 +28,25 @@ class _FavoritePageState extends State<FavoritePage> {
           builder: (context, state) {
             if (state is FavoLoaded || state is FavoSuccess) {
               final listItem = context.read<FavoriteCubits>().listFavo;
-              print('listItem $listItem');
+              final listProduct = context.read<FavoriteCubits>().listProduct;
+              print(listProduct);
               if (listItem.isEmpty) {
                 return const Center(child: Text('No favorite food yet'));
               }
               return ListView.builder(
                 itemCount: listItem.length,
                 itemBuilder: (context, index) {
-                  return FavoriteItem(item: listItem[index]);
+                  return FavoriteItem(
+                    item: listItem[index],
+                    product: listProduct[index],
+                  );
                 },
               );
             }
             return const Center(child: CircularProgressIndicator());
           },
           listener: (context, state) {
-            if (state is FavoError) {
-              print(state.msg);
-            }
+            if (state is FavoError) {}
           },
         ),
       ),

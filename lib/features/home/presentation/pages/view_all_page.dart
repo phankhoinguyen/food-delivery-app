@@ -14,6 +14,13 @@ class ViewAllPage extends StatefulWidget {
 
 class _ViewAllPageState extends State<ViewAllPage> {
   @override
+  void initState() {
+    context.read<ProductCubits>().getProduct();
+
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: MyColor.viewAllBackground,

@@ -2,6 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_delivery/features/favorite/domain/entities/favorite_model.dart';
 import 'package:food_delivery/features/favorite/domain/repo/favorite_repo.dart';
 import 'package:food_delivery/features/favorite/presentation/cubits/favorite_state.dart';
+import 'package:food_delivery/features/home/domain/entities/product_model.dart';
 
 class FavoriteCubits extends Cubit<FavoriteState> {
   final FavoriteRepo favoriteRepo;
@@ -10,6 +11,7 @@ class FavoriteCubits extends Cubit<FavoriteState> {
   final List<String> _listFavoriteId = [];
 
   List<FavoriteModel> listFavo = [];
+  List<ProductModel> listProduct = [];
   Future<List<FavoriteModel>> getFavoriteList() async {
     emit(FavoLoading());
     try {
@@ -18,6 +20,7 @@ class FavoriteCubits extends Cubit<FavoriteState> {
       for (var e in listItem) {
         _listFavoriteId.add(e.id);
       }
+      listProduct = await favoriteRepo.getProductById(_listFavoriteId);
       emit(FavoLoaded(listItem));
       return listItem;
     } catch (e) {
@@ -50,7 +53,6 @@ class FavoriteCubits extends Cubit<FavoriteState> {
   }
 
   bool isExist(String itemId) {
-    print(_listFavoriteId.contains(itemId));
     return _listFavoriteId.contains(itemId);
   }
 }

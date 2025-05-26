@@ -78,7 +78,67 @@ class _HomePageState extends State<HomePage> {
                   ),
                   homeCategory(listCategory),
                   const SizedBox(height: 25),
-                  homeViewAll(context),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 25),
+                    child: Row(
+                      children: [
+                        Text(
+                          'Popular Now',
+                          style: Theme.of(context).textTheme.headlineLarge,
+                        ),
+                        const Spacer(),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder:
+                                    (ctxViewAll) => MultiBlocProvider(
+                                      providers: [
+                                        BlocProvider.value(
+                                          value: BlocProvider.of<ProductCubits>(
+                                            ctx,
+                                          ),
+                                        ),
+                                        BlocProvider.value(
+                                          value:
+                                              BlocProvider.of<FavoriteCubits>(
+                                                ctx,
+                                              ),
+                                        ),
+                                      ],
+
+                                      child: const ViewAllPage(),
+                                    ),
+                              ),
+                            );
+                          },
+                          child: Row(
+                            children: [
+                              Text(
+                                'View All',
+                                style: Theme.of(context).textTheme.titleMedium!
+                                    .copyWith(color: MyColor.orange),
+                              ),
+                              const SizedBox(width: 5),
+                              Container(
+                                padding: const EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                  color: MyColor.orange,
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
+                                child: const Icon(
+                                  size: 10,
+                                  Icons.arrow_forward_ios_rounded,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   const SizedBox(height: 20),
                   homeProduct(listCategory, size),
                 ],
@@ -283,60 +343,8 @@ class _HomePageState extends State<HomePage> {
               },
             );
           }
-          return const Center(child: const CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         },
-      ),
-    );
-  }
-
-  Padding homeViewAll(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 25),
-      child: Row(
-        children: [
-          Text('Popular Now', style: Theme.of(context).textTheme.headlineLarge),
-          const Spacer(),
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder:
-                      (ctx) => BlocProvider(
-                        create:
-                            (_) =>
-                                ProductCubits(productRepo: productRepo)
-                                  ..getProduct(),
-                        child: const ViewAllPage(),
-                      ),
-                ),
-              );
-            },
-            child: Row(
-              children: [
-                Text(
-                  'View All',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.titleMedium!.copyWith(color: MyColor.orange),
-                ),
-                const SizedBox(width: 5),
-                Container(
-                  padding: const EdgeInsets.all(5),
-                  decoration: BoxDecoration(
-                    color: MyColor.orange,
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  child: const Icon(
-                    size: 10,
-                    Icons.arrow_forward_ios_rounded,
-                    color: Colors.white,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
