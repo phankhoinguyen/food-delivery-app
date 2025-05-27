@@ -12,36 +12,33 @@ class AuthGate extends StatelessWidget {
   final authRepo = FirebaseAuthRepo();
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => AuthCubits(authRepo: authRepo)..checkAuth(),
-      child: BlocConsumer<AuthCubits, AuthState>(
-        builder: (context, state) {
-          if (state is Authenticated) {
-            return const MainPage();
-          }
+    return BlocConsumer<AuthCubits, AuthState>(
+      builder: (context, state) {
+        if (state is Authenticated) {
+          return const MainPage();
+        }
 
-          return const AuthPage();
-        },
-        listener: (context, state) {
-          if (state is AuthError) {
-            showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  title: const Text('Try again!'),
-                  content: Text(state.msg),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('Close'),
-                    ),
-                  ],
-                );
-              },
-            );
-          }
-        },
-      ),
+        return const AuthPage();
+      },
+      listener: (context, state) {
+        if (state is AuthError) {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: const Text('Try again!'),
+                content: Text(state.msg),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: const Text('Close'),
+                  ),
+                ],
+              );
+            },
+          );
+        }
+      },
     );
   }
 }

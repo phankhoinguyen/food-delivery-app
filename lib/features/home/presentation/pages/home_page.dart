@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_delivery/features/auth/presentation/cubits/auth_cubits.dart';
+import 'package:food_delivery/features/cart/presentation/cubits/cart_cubits.dart';
 import 'package:food_delivery/features/favorite/data/favorite_repo_firestore.dart';
 import 'package:food_delivery/features/favorite/presentation/cubits/favorite_cubits.dart';
 import 'package:food_delivery/features/favorite/presentation/cubits/favorite_state.dart';
@@ -105,6 +106,11 @@ class _HomePageState extends State<HomePage> {
                                               BlocProvider.of<FavoriteCubits>(
                                                 ctx,
                                               ),
+                                        ),
+                                        BlocProvider.value(
+                                          value: BlocProvider.of<CartCubits>(
+                                            ctx,
+                                          ),
                                         ),
                                       ],
 

@@ -1,8 +1,12 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_delivery/config/firebase_options.dart';
+import 'package:food_delivery/features/auth/data/firebase_auth_repo.dart';
+import 'package:food_delivery/features/auth/presentation/cubits/auth_cubits.dart';
 import 'package:food_delivery/features/auth/presentation/pages/auth_gate.dart';
+
 import 'package:food_delivery/theme/light_theme.dart';
 
 void main() async {
@@ -16,7 +20,17 @@ void main() async {
   );
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  runApp(const MyApp());
+  final authRepo = FirebaseAuthRepo();
+  runApp(
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => AuthCubits(authRepo: authRepo)..checkAuth(),
+        ),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

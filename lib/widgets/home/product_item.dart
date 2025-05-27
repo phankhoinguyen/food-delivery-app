@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:food_delivery/features/cart/presentation/cubits/cart_cubits.dart';
 import 'package:food_delivery/features/favorite/domain/entities/favorite_model.dart';
 import 'package:food_delivery/features/favorite/presentation/cubits/favorite_cubits.dart';
 import 'package:food_delivery/features/favorite/presentation/cubits/favorite_state.dart';
@@ -27,8 +28,10 @@ class _ProductItemState extends State<ProductItem> {
           PageRouteBuilder(
             transitionDuration: const Duration(seconds: 1),
             pageBuilder:
-                (context, animation, secondaryAnimation) =>
-                    ProductDetailPage(product: widget.product),
+                (_, _, _) => BlocProvider.value(
+                  value: BlocProvider.of<CartCubits>(context),
+                  child: ProductDetailPage(product: widget.product),
+                ),
           ),
         );
       },
