@@ -178,7 +178,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           builder: (context, state) {
                             final isLoading = state is AuthLoading;
                             return isLoading
-                                ? MyButon.loading()
+                                ? const MyButon.loading()
                                 : MyButon(text: 'SIGN UP', onTap: signUp);
                           },
                         ),

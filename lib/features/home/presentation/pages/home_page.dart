@@ -14,6 +14,9 @@ import 'package:food_delivery/features/home/presentation/cubits/category_state.d
 import 'package:food_delivery/features/home/presentation/cubits/product_cubits.dart';
 import 'package:food_delivery/features/home/presentation/cubits/product_state.dart';
 import 'package:food_delivery/features/home/presentation/pages/view_all_page.dart';
+import 'package:food_delivery/features/profile/presentation/cubits/profile_cubits.dart';
+import 'package:food_delivery/features/profile/presentation/cubits/profile_state.dart';
+import 'package:food_delivery/features/profile/presentation/pages/profile_page.dart';
 import 'package:food_delivery/theme/my_color.dart';
 import 'package:food_delivery/widgets/home/product_item.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
@@ -34,6 +37,7 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     final user = context.read<AuthCubits>().currentUser;
+
     final favoriteRepo = FavoriteRepoFirestore(user!);
     final size = MediaQuery.of(context).size;
     return MultiBlocProvider(
@@ -57,7 +61,7 @@ class _HomePageState extends State<HomePage> {
             selectedCategory ??= listCategory.first.name;
             ctx.read<ProductCubits>().getProductByCate(selectedCategory!);
             return Scaffold(
-              appBar: homeAppbar(context),
+              appBar: homeAppbar(ctx),
               body: Column(
                 children: [
                   Padding(
@@ -79,72 +83,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   homeCategory(listCategory),
                   const SizedBox(height: 25),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 25),
-                    child: Row(
-                      children: [
-                        Text(
-                          'Popular Now',
-                          style: Theme.of(context).textTheme.headlineLarge,
-                        ),
-                        const Spacer(),
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder:
-                                    (ctxViewAll) => MultiBlocProvider(
-                                      providers: [
-                                        BlocProvider.value(
-                                          value: BlocProvider.of<ProductCubits>(
-                                            ctx,
-                                          ),
-                                        ),
-                                        BlocProvider.value(
-                                          value:
-                                              BlocProvider.of<FavoriteCubits>(
-                                                ctx,
-                                              ),
-                                        ),
-                                        BlocProvider.value(
-                                          value: BlocProvider.of<CartCubits>(
-                                            ctx,
-                                          ),
-                                        ),
-                                      ],
-
-                                      child: const ViewAllPage(),
-                                    ),
-                              ),
-                            );
-                          },
-                          child: Row(
-                            children: [
-                              Text(
-                                'View All',
-                                style: Theme.of(context).textTheme.titleMedium!
-                                    .copyWith(color: MyColor.orange),
-                              ),
-                              const SizedBox(width: 5),
-                              Container(
-                                padding: const EdgeInsets.all(5),
-                                decoration: BoxDecoration(
-                                  color: MyColor.orange,
-                                  borderRadius: BorderRadius.circular(5),
-                                ),
-                                child: const Icon(
-                                  size: 10,
-                                  Icons.arrow_forward_ios_rounded,
-                                  color: Colors.white,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                  homeViewAll(context, ctx),
                   const SizedBox(height: 20),
                   homeProduct(listCategory, size),
                 ],
@@ -178,6 +117,66 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Padding homeViewAll(BuildContext context, BuildContext ctx) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 25),
+      child: Row(
+        children: [
+          Text('Popular Now', style: Theme.of(context).textTheme.headlineLarge),
+          const Spacer(),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder:
+                      (ctxViewAll) => MultiBlocProvider(
+                        providers: [
+                          BlocProvider.value(
+                            value: BlocProvider.of<ProductCubits>(ctx),
+                          ),
+                          BlocProvider.value(
+                            value: BlocProvider.of<FavoriteCubits>(ctx),
+                          ),
+                          BlocProvider.value(
+                            value: BlocProvider.of<CartCubits>(ctx),
+                          ),
+                        ],
+
+                        child: const ViewAllPage(),
+                      ),
+                ),
+              );
+            },
+            child: Row(
+              children: [
+                Text(
+                  'View All',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleMedium!.copyWith(color: MyColor.orange),
+                ),
+                const SizedBox(width: 5),
+                Container(
+                  padding: const EdgeInsets.all(5),
+                  decoration: BoxDecoration(
+                    color: MyColor.orange,
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: const Icon(
+                    size: 10,
+                    Icons.arrow_forward_ios_rounded,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   AppBar homeAppbar(BuildContext context) {
     return AppBar(
       centerTitle: true,
@@ -189,7 +188,17 @@ class _HomePageState extends State<HomePage> {
             shape: BoxShape.circle,
           ),
           child: IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder:
+                      (_) => BlocProvider.value(
+                        value: BlocProvider.of<ProfileCubits>(context),
+                        child: const ProfilePage(),
+                      ),
+                ),
+              );
+            },
             icon: const Icon(Iconsax.menu_copy, size: 18),
           ),
         ),
@@ -225,9 +234,10 @@ class _HomePageState extends State<HomePage> {
               (appnarContext) => GestureDetector(
                 onTap: () {
                   showPopover(
+                    transitionDuration: const Duration(milliseconds: 150),
                     radius: 20,
                     backgroundColor: Colors.blueGrey[100]!,
-                    height: 105,
+                    height: 50,
                     width: 180,
                     context: appnarContext,
                     bodyBuilder: (ctx) {
@@ -256,40 +266,54 @@ class _HomePageState extends State<HomePage> {
                               ),
                             ),
                           ),
-                          const Divider(
-                            height: 1,
-                            thickness: 1,
-                            color: Colors.grey,
-                          ),
-                          Container(
-                            height: 50,
-                            decoration: BoxDecoration(
-                              color: Colors.blueGrey[100],
-                            ),
-                            child: Center(
-                              child: Text(
-                                'Edit Profile',
-                                style: Theme.of(
-                                  context,
-                                ).textTheme.titleMedium!.copyWith(
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
                         ],
                       );
                     },
                   );
                 },
-                child: Container(
-                  padding: const EdgeInsets.all(13),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[100],
-                    shape: BoxShape.circle,
-                  ),
-                  child: Image.asset('assets/profile.png', width: 23),
+
+                child: BlocBuilder<ProfileCubits, ProfileState>(
+                  builder: (context, state) {
+                    if (state is ProfileLoaded) {
+                      String avatarUrl = state.user.imgUrl;
+
+                      return Container(
+                        width: 36,
+                        height: 36,
+                        clipBehavior: Clip.hardEdge,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          shape: BoxShape.circle,
+                        ),
+                        child:
+                            avatarUrl.isNotEmpty
+                                ? CachedNetworkImage(
+                                  fit: BoxFit.cover,
+                                  imageUrl: avatarUrl,
+                                  placeholder:
+                                      (context, url) => const Center(
+                                        child: CircularProgressIndicator(),
+                                      ),
+                                )
+                                : const Icon(Icons.person, size: 23),
+                      );
+                    }
+                    return Container(
+                      clipBehavior: Clip.hardEdge,
+                      padding: const EdgeInsets.all(13),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[200],
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Center(
+                        child: SizedBox(
+                          height: 18,
+                          width: 18,
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
         ),

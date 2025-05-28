@@ -4,6 +4,8 @@ import 'package:food_delivery/features/auth/data/firebase_auth_repo.dart';
 import 'package:food_delivery/features/auth/presentation/cubits/auth_cubits.dart';
 import 'package:food_delivery/features/auth/presentation/cubits/auth_state.dart';
 import 'package:food_delivery/features/auth/presentation/pages/auth_page.dart';
+import 'package:food_delivery/features/profile/data/profile_repo_firestore.dart';
+import 'package:food_delivery/features/profile/presentation/cubits/profile_cubits.dart';
 import 'package:food_delivery/pages/main_page.dart';
 
 class AuthGate extends StatelessWidget {
@@ -15,7 +17,12 @@ class AuthGate extends StatelessWidget {
     return BlocConsumer<AuthCubits, AuthState>(
       builder: (context, state) {
         if (state is Authenticated) {
-          return const MainPage();
+          final user = state.user;
+          final profileRepo = ProfileRepoFirestore(user);
+          return BlocProvider(
+            create: (context) => ProfileCubits(profileRepo)..getUserProfile(),
+            child: const MainPage(),
+          );
         }
 
         return const AuthPage();
