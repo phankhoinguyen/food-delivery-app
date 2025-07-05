@@ -11,6 +11,7 @@ class CategoryCubits extends Cubit<CategoryState> {
     try {
       emit(CateLoading());
       final listCategory = await categoryRepo.getCategory();
+      // await Future.delayed(const Duration(seconds: 3));
       emit(CateSuccess(listCategories: listCategory));
       return listCategory;
     } catch (e) {

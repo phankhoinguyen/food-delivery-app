@@ -4,8 +4,8 @@ import 'package:food_delivery/features/auth/data/firebase_auth_repo.dart';
 import 'package:food_delivery/features/auth/presentation/cubits/auth_cubits.dart';
 import 'package:food_delivery/features/auth/presentation/cubits/auth_state.dart';
 import 'package:food_delivery/features/auth/presentation/pages/auth_page.dart';
-import 'package:food_delivery/features/profile/data/profile_repo_firestore.dart';
-import 'package:food_delivery/features/profile/presentation/cubits/profile_cubits.dart';
+import 'package:food_delivery/features/setting/profile/data/profile_repo_firestore.dart';
+import 'package:food_delivery/features/setting/profile/presentation/cubits/profile_cubits.dart';
 import 'package:food_delivery/pages/main_page.dart';
 
 class AuthGate extends StatelessWidget {

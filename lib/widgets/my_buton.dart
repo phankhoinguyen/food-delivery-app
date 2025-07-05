@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:food_delivery/theme/my_color.dart';
+import 'package:food_delivery/core/theme/my_color.dart';
 
 class MyButon extends StatelessWidget {
   const MyButon({super.key, required this.text, required this.onTap});

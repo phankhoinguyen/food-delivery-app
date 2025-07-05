@@ -4,13 +4,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_delivery/features/auth/domain/entities/app_user.dart';
 import 'package:food_delivery/features/auth/presentation/cubits/auth_cubits.dart';
 import 'package:food_delivery/features/cart/data/cart_repo_firestore.dart';
-import 'package:food_delivery/features/cart/presentation/cubits/cart_cubits.dart';
-import 'package:food_delivery/features/cart/presentation/cubits/cart_state.dart';
+import 'package:food_delivery/features/cart/presentation/bloc/cart_bloc.dart';
+import 'package:food_delivery/features/cart/presentation/bloc/cart_event.dart';
+import 'package:food_delivery/features/cart/presentation/bloc/cart_state.dart';
 import 'package:food_delivery/features/cart/presentation/pages/cart_page.dart';
 import 'package:food_delivery/features/favorite/presentation/pages/favorite_page.dart';
 import 'package:food_delivery/features/home/presentation/pages/home_page.dart';
 import 'package:food_delivery/pages/mock_demo.dart';
-import 'package:food_delivery/theme/my_color.dart';
+import 'package:food_delivery/core/theme/my_color.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 
 class MainPage extends StatefulWidget {
@@ -40,13 +41,10 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     final cartRepo = CartRepoFirestore(user);
     return BlocProvider(
-      create: (context) => CartCubits(cartRepo)..getListCart(),
-      child: BlocConsumer<CartCubits, CartState>(
+      create: (context) => CartBloc(cartRepo: cartRepo)..add(GetCartList()),
+      child: BlocConsumer<CartBloc, CartState>(
         builder: (context, state) {
-          int cartQuantity = 0;
-          if (state is CartLoaded) {
-            cartQuantity = state.listCart.length;
-          }
+          int cartQuantity = state.cartItems.length;
           return Scaffold(
             body: listBody[currentIndex],
             bottomNavigationBar: Container(
@@ -100,13 +98,16 @@ class _MainPageState extends State<MainPage> {
           );
         },
         listener: (context, state) {
+          if (state is CartAddSuccess) {
+            context.read<CartBloc>().add(GetCartList());
+          }
           if (state is CartError) {
             showDialog(
               context: context,
               builder: (context) {
                 return AlertDialog(
                   title: const Text('Try again!'),
-                  content: Text(state.msg),
+                  content: Text(state.message),
                   actions: [
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(),

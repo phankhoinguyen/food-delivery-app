@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_delivery/features/auth/presentation/cubits/auth_cubits.dart';
 import 'package:food_delivery/features/auth/presentation/cubits/auth_state.dart';
-import 'package:food_delivery/theme/my_color.dart';
+import 'package:food_delivery/core/theme/my_color.dart';
 import 'package:food_delivery/widgets/TextField/my_pass_field.dart';
 import 'package:food_delivery/widgets/TextField/my_text_field.dart';
 import 'package:food_delivery/widgets/my_buton.dart';

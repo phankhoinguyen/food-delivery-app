@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:food_delivery/features/auth/presentation/cubits/auth_cubits.dart';
+
+import 'package:food_delivery/core/theme/my_color.dart';
 
 class MockDemo extends StatelessWidget {
   const MockDemo({super.key});
@@ -8,12 +8,14 @@ class MockDemo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: IconButton(
-          onPressed: () {
-            context.read<AuthCubits>().logOut();
-          },
-          icon: const Icon(Icons.logout_outlined),
+      body: Container(
+        decoration: const BoxDecoration(color: MyColor.imageBackground),
+        width: double.infinity,
+        height: 900,
+        child: Image.asset(
+          'assets/food_pattern.png',
+          repeat: ImageRepeat.repeatY,
+          color: MyColor.imageBackground2,
         ),
       ),
     );

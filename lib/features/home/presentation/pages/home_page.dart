@@ -2,7 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_delivery/features/auth/presentation/cubits/auth_cubits.dart';
-import 'package:food_delivery/features/cart/presentation/cubits/cart_cubits.dart';
+import 'package:food_delivery/features/cart/presentation/bloc/cart_bloc.dart';
 import 'package:food_delivery/features/favorite/data/favorite_repo_firestore.dart';
 import 'package:food_delivery/features/favorite/presentation/cubits/favorite_cubits.dart';
 import 'package:food_delivery/features/favorite/presentation/cubits/favorite_state.dart';
@@ -14,10 +14,10 @@ import 'package:food_delivery/features/home/presentation/cubits/category_state.d
 import 'package:food_delivery/features/home/presentation/cubits/product_cubits.dart';
 import 'package:food_delivery/features/home/presentation/cubits/product_state.dart';
 import 'package:food_delivery/features/home/presentation/pages/view_all_page.dart';
-import 'package:food_delivery/features/profile/presentation/cubits/profile_cubits.dart';
-import 'package:food_delivery/features/profile/presentation/cubits/profile_state.dart';
-import 'package:food_delivery/features/profile/presentation/pages/profile_page.dart';
-import 'package:food_delivery/theme/my_color.dart';
+import 'package:food_delivery/features/setting/profile/presentation/cubits/profile_cubits.dart';
+import 'package:food_delivery/features/setting/profile/presentation/cubits/profile_state.dart';
+import 'package:food_delivery/features/setting/presentation/setting_page.dart';
+import 'package:food_delivery/core/theme/my_color.dart';
 import 'package:food_delivery/widgets/home/product_item.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:popover/popover.dart';
@@ -40,6 +40,8 @@ class _HomePageState extends State<HomePage> {
 
     final favoriteRepo = FavoriteRepoFirestore(user!);
     final size = MediaQuery.of(context).size;
+    print(size.height);
+    print(size.width);
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -93,6 +95,7 @@ class _HomePageState extends State<HomePage> {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
+          // return const SplashScreen();
         },
         listener: (context, state) {
           if (state is CateError) {
@@ -139,7 +142,7 @@ class _HomePageState extends State<HomePage> {
                             value: BlocProvider.of<FavoriteCubits>(ctx),
                           ),
                           BlocProvider.value(
-                            value: BlocProvider.of<CartCubits>(ctx),
+                            value: BlocProvider.of<CartBloc>(ctx),
                           ),
                         ],
 
@@ -180,6 +183,7 @@ class _HomePageState extends State<HomePage> {
   AppBar homeAppbar(BuildContext context) {
     return AppBar(
       centerTitle: true,
+
       actions: [
         const SizedBox(width: 24),
         Container(
@@ -194,7 +198,7 @@ class _HomePageState extends State<HomePage> {
                   builder:
                       (_) => BlocProvider.value(
                         value: BlocProvider.of<ProfileCubits>(context),
-                        child: const ProfilePage(),
+                        child: const SettingPage(),
                       ),
                 ),
               );

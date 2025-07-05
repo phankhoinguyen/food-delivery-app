@@ -1,9 +1,10 @@
+import 'package:equatable/equatable.dart';
 import 'package:food_delivery/features/home/domain/entities/product_model.dart';
 
-class CartModel {
+class CartModel extends Equatable {
   final String id;
   final String name;
-  final int quantity;
+  int quantity;
   final double price;
   final String imgUrl;
 
@@ -44,4 +45,7 @@ class CartModel {
       quantity: quantity,
     );
   }
+
+  @override
+  List<Object?> get props => [quantity];
 }

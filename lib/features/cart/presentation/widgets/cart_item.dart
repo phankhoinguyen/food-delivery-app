@@ -2,8 +2,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_delivery/features/cart/domain/entities/cart_model.dart';
-import 'package:food_delivery/features/cart/presentation/cubits/cart_cubits.dart';
-import 'package:food_delivery/features/cart/presentation/cubits/cart_state.dart';
+import 'package:food_delivery/features/cart/presentation/bloc/cart_bloc.dart';
+import 'package:food_delivery/features/cart/presentation/bloc/cart_event.dart';
+import 'package:food_delivery/features/cart/presentation/bloc/cart_state.dart';
+import 'package:food_delivery/features/setting/address/presentation/pages/address_page.dart';
 
 class CartItem extends StatefulWidget {
   const CartItem({super.key, required this.item, required this.onDismissed});
@@ -15,37 +17,22 @@ class CartItem extends StatefulWidget {
 }
 
 class _CartItemState extends State<CartItem> {
-  late int quantity;
-  @override
-  void initState() {
-    quantity = widget.item.quantity;
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
-    final item = widget.item;
-    final cartCubits = context.read<CartCubits>();
+    final cartBloc = context.read<CartBloc>();
 
     void increase() {
-      setState(() {
-        quantity += 1;
-      });
-      cartCubits.increaseQuantity(item.id, 1);
+      cartBloc.add(IncreaseQuantity(widget.item.id, 1));
     }
 
     void decrease() {
-      if (quantity > 1) {
-        setState(() {
-          quantity -= 1;
-        });
+      if (widget.item.quantity > 1) {
+        cartBloc.add(DecreaseQuantity(widget.item));
       }
-
-      cartCubits.decreaseQuantity(item);
     }
 
     return Dismissible(
-      key: ValueKey(item.id),
+      key: ValueKey(widget.item.id),
       direction: DismissDirection.endToStart,
       onDismissed: (direction) {
         widget.onDismissed();
@@ -53,7 +40,7 @@ class _CartItemState extends State<CartItem> {
           SnackBar(
             duration: const Duration(seconds: 2),
             behavior: SnackBarBehavior.floating,
-            content: Text('${item.name} removed from cart'),
+            content: Text('${widget.item.name} removed from cart'),
             margin: const EdgeInsets.only(bottom: 25),
           ),
         );
@@ -70,7 +57,7 @@ class _CartItemState extends State<CartItem> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             CachedNetworkImage(
-              imageUrl: item.imgUrl,
+              imageUrl: widget.item.imgUrl,
               width: 136,
               height: 117,
               placeholder:
@@ -83,16 +70,17 @@ class _CartItemState extends State<CartItem> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    item.name,
+                    widget.item.name,
                     style: Theme.of(context).textTheme.titleMedium!.copyWith(
                       fontSize: 18,
                       fontWeight: FontWeight.w500,
                     ),
-                    maxLines: 126,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 5),
                   Text(
-                    '\$ ${item.price}',
+                    '\$ ${widget.item.price}',
                     style: Theme.of(context).textTheme.headlineLarge,
                   ),
                   const SizedBox(height: 10),
@@ -111,10 +99,15 @@ class _CartItemState extends State<CartItem> {
                         ),
                       ),
                       const SizedBox(width: 5),
-                      BlocConsumer<CartCubits, CartState>(
-                        listener: (context, state) {},
+                      BlocBuilder<CartBloc, CartState>(
                         builder: (context, state) {
-                          print(state);
+                          int quantity =
+                              state.cartItems
+                                  .firstWhere(
+                                    (cartItem) => cartItem.id == widget.item.id,
+                                    orElse: () => widget.item,
+                                  )
+                                  .quantity;
                           return Text(
                             quantity.toString(),
                             style: Theme.of(context).textTheme.titleMedium!

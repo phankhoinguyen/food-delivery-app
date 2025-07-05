@@ -4,11 +4,17 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_delivery/features/auth/domain/entities/app_user.dart';
 import 'package:food_delivery/features/auth/presentation/cubits/auth_cubits.dart';
 import 'package:food_delivery/features/cart/domain/entities/cart_model.dart';
-import 'package:food_delivery/features/cart/presentation/cubits/cart_cubits.dart';
-import 'package:food_delivery/features/cart/presentation/cubits/cart_state.dart';
+import 'package:food_delivery/features/cart/presentation/bloc/cart_bloc.dart';
+import 'package:food_delivery/features/cart/presentation/bloc/cart_event.dart';
+import 'package:food_delivery/features/cart/presentation/bloc/cart_state.dart';
+
+import 'package:food_delivery/features/cart/presentation/pages/cart_page.dart';
 
 import 'package:food_delivery/features/home/domain/entities/product_model.dart';
-import 'package:food_delivery/theme/my_color.dart';
+import 'package:food_delivery/core/theme/my_color.dart';
+import 'package:food_delivery/features/setting/address/presentation/pages/address_page.dart';
+import 'package:food_delivery/pages/main_page.dart';
+import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:readmore/readmore.dart';
 
 class ProductDetailPage extends StatefulWidget {
@@ -31,7 +37,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    return BlocConsumer<CartCubits, CartState>(
+    return BlocConsumer<CartBloc, CartState>(
       listener: (context, state) {
         if (state is CartAddSuccess) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -46,8 +52,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
               ),
               duration: const Duration(seconds: 2),
               backgroundColor: Colors.green[800],
-              behavior:
-                  SnackBarBehavior.floating, // Hiển thị cách bottom một chút
+              behavior: SnackBarBehavior.floating,
             ),
           );
         }
@@ -55,7 +60,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       builder: (context, state) {
         return Scaffold(
           extendBodyBehindAppBar: true,
-          appBar: appbarPart(),
+          appBar: appbarPart(context),
           body: Stack(
             alignment: Alignment.bottomCenter,
             children: [
@@ -263,7 +268,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                   quantity,
                 );
                 try {
-                  context.read<CartCubits>().addToList(cartItem, quantity);
+                  context.read<CartBloc>().add(AddToCart(cartItem, quantity));
                 } catch (e) {
                   showDialog(
                     context: context,
@@ -310,7 +315,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     );
   }
 
-  AppBar appbarPart() {
+  AppBar appbarPart(BuildContext context) {
     return AppBar(
       forceMaterialTransparency: true,
       automaticallyImplyLeading: false,
@@ -336,18 +341,31 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           ),
         ), // I
         const Spacer(),
-        Container(
-          height: 40,
-          width: 40,
-          padding: const EdgeInsets.all(7),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: Colors.white,
-          ), // BoxDecoration
-          child: const Icon(
-            Icons.more_horiz_rounded,
-            color: Colors.black,
-            size: 18,
+        GestureDetector(
+          onTap: () {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder:
+                    (_) => BlocProvider.value(
+                      value: BlocProvider.of<CartBloc>(context),
+                      child: const CartPage(),
+                    ),
+              ),
+            );
+          },
+          child: Container(
+            height: 40,
+            width: 40,
+            padding: const EdgeInsets.all(7),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Colors.white,
+            ), // BoxDecoration
+            child: const Icon(
+              Iconsax.shopping_cart_copy,
+              color: Colors.black,
+              size: 18,
+            ),
           ),
         ), // Icon
         const SizedBox(width: 27),

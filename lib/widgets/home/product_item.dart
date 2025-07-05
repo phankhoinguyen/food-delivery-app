@@ -1,13 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:food_delivery/features/cart/presentation/cubits/cart_cubits.dart';
+import 'package:food_delivery/features/cart/presentation/bloc/cart_bloc.dart';
 import 'package:food_delivery/features/favorite/domain/entities/favorite_model.dart';
 import 'package:food_delivery/features/favorite/presentation/cubits/favorite_cubits.dart';
 import 'package:food_delivery/features/favorite/presentation/cubits/favorite_state.dart';
 import 'package:food_delivery/features/home/domain/entities/product_model.dart';
 import 'package:food_delivery/features/home/presentation/pages/product_detail_page.dart';
-import 'package:food_delivery/theme/my_color.dart';
+import 'package:food_delivery/core/theme/my_color.dart';
 
 class ProductItem extends StatefulWidget {
   final ProductModel product;
@@ -29,7 +29,7 @@ class _ProductItemState extends State<ProductItem> {
             transitionDuration: const Duration(seconds: 1),
             pageBuilder:
                 (_, _, _) => BlocProvider.value(
-                  value: BlocProvider.of<CartCubits>(context),
+                  value: BlocProvider.of<CartBloc>(context),
                   child: ProductDetailPage(product: widget.product),
                 ),
           ),

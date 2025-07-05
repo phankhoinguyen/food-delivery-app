@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:food_delivery/theme/my_color.dart';
+import 'package:food_delivery/core/theme/my_color.dart';
 
 class MyPassField extends StatefulWidget {
   const MyPassField({super.key, required this.controller});
