@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_delivery/features/home/presentation/cubits/product_cubits.dart';
 import 'package:food_delivery/features/home/presentation/cubits/product_state.dart';
 import 'package:food_delivery/core/theme/my_color.dart';
-import 'package:food_delivery/widgets/home/product_item.dart';
+import 'package:food_delivery/core/widgets/home/product_item.dart';
 
 class ViewAllPage extends StatefulWidget {
   const ViewAllPage({super.key});

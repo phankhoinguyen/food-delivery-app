@@ -4,10 +4,10 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:food_delivery/features/auth/presentation/cubits/auth_cubits.dart';
 import 'package:food_delivery/features/auth/presentation/cubits/auth_state.dart';
 import 'package:food_delivery/core/theme/my_color.dart';
-import 'package:food_delivery/widgets/TextField/my_pass_field.dart';
-import 'package:food_delivery/widgets/TextField/my_text_field.dart';
-import 'package:food_delivery/widgets/my_buton.dart';
-import 'package:food_delivery/widgets/my_check_box.dart';
+import 'package:food_delivery/core/widgets/TextField/my_pass_field.dart';
+import 'package:food_delivery/core/widgets/TextField/my_text_field.dart';
+import 'package:food_delivery/core/widgets/my_buton.dart';
+import 'package:food_delivery/core/widgets/my_check_box.dart';
 
 class LoginPage extends StatelessWidget {
   final emailInput = TextEditingController();

@@ -2,6 +2,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:food_delivery/features/payment/data/repo/payment_repo_impl.dart';
+import 'package:food_delivery/features/payment/domain/repo/payment_repo.dart';
 import 'package:food_delivery/features/setting/address/data/repo/i_address_page_repo.dart';
 import 'package:food_delivery/features/setting/address/domain/repo/add_address_repo.dart';
 import 'package:food_delivery/features/setting/address/domain/repo/address_page_repo.dart';
@@ -38,6 +40,7 @@ void main() async {
         RepositoryProvider<AddressPageRepo>(
           create: (context) => IAddressPageRepo(),
         ),
+        RepositoryProvider<PaymentRepo>(create: (context) => PaymentRepoImpl()),
       ],
       child: MultiBlocProvider(
         providers: [
@@ -72,6 +75,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       // home: SafeArea(bottom: false, top: false, child: AuthGate()),
       home: const SplashScreen(),
+
       theme: lightMode,
     );
   }

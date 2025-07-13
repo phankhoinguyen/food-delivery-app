@@ -5,7 +5,7 @@ import 'package:food_delivery/features/cart/domain/entities/cart_model.dart';
 import 'package:food_delivery/features/cart/presentation/bloc/cart_bloc.dart';
 import 'package:food_delivery/features/cart/presentation/bloc/cart_event.dart';
 import 'package:food_delivery/features/cart/presentation/bloc/cart_state.dart';
-import 'package:food_delivery/features/setting/address/presentation/pages/address_page.dart';
+import 'dart:async';
 
 class CartItem extends StatefulWidget {
   const CartItem({super.key, required this.item, required this.onDismissed});
@@ -17,17 +17,70 @@ class CartItem extends StatefulWidget {
 }
 
 class _CartItemState extends State<CartItem> {
+  Timer? _debounceTimer;
+  int _pendingQuantity = 0;
+  int _increaseCount = 0;
+  int _decreaseCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _pendingQuantity = widget.item.quantity;
+  }
+
+  @override
+  void dispose() {
+    _debounceTimer?.cancel();
+    super.dispose();
+  }
+
+  void _debounce(VoidCallback callback) {
+    if (_debounceTimer?.isActive ?? false) {
+      _debounceTimer?.cancel();
+    }
+    _debounceTimer = Timer(const Duration(milliseconds: 500), callback);
+  }
+
   @override
   Widget build(BuildContext context) {
     final cartBloc = context.read<CartBloc>();
 
     void increase() {
-      cartBloc.add(IncreaseQuantity(widget.item.id, 1));
+      setState(() {
+        _pendingQuantity += 1;
+        _increaseCount += 1;
+        _decreaseCount = 0;
+      });
+
+      _debounce(() {
+        if (_increaseCount > 0) {
+          cartBloc.add(IncreaseQuantity(widget.item.id, _increaseCount));
+          _increaseCount = 0;
+        }
+      });
     }
 
     void decrease() {
-      if (widget.item.quantity > 1) {
-        cartBloc.add(DecreaseQuantity(widget.item));
+      if (_pendingQuantity > 1) {
+        setState(() {
+          _pendingQuantity -= 1;
+          _decreaseCount += 1;
+          _increaseCount = 0;
+        });
+
+        _debounce(() {
+          if (_decreaseCount > 0) {
+            final updatedItem = CartModel(
+              id: widget.item.id,
+              name: widget.item.name,
+              quantity: widget.item.quantity - _decreaseCount,
+              price: widget.item.price,
+              imgUrl: widget.item.imgUrl,
+            );
+            cartBloc.add(DecreaseQuantity(updatedItem));
+            _decreaseCount = 0;
+          }
+        });
       }
     }
 
@@ -89,27 +142,39 @@ class _CartItemState extends State<CartItem> {
                       const Spacer(),
                       Container(
                         decoration: BoxDecoration(
-                          color: Colors.grey[200],
+                          color: Colors.grey[100],
                           shape: BoxShape.circle,
                         ),
                         child: IconButton(
-                          icon: const Icon(Icons.add),
-                          onPressed: increase,
+                          icon: const Icon(Icons.remove),
+                          onPressed: decrease,
                           padding: const EdgeInsets.all(8),
                         ),
                       ),
+
                       const SizedBox(width: 5),
                       BlocBuilder<CartBloc, CartState>(
                         builder: (context, state) {
-                          int quantity =
-                              state.cartItems
-                                  .firstWhere(
-                                    (cartItem) => cartItem.id == widget.item.id,
-                                    orElse: () => widget.item,
-                                  )
-                                  .quantity;
+                          // If there's no active debounce and no pending counts, update pending quantity
+                          if (!(_debounceTimer?.isActive ?? false) &&
+                              _increaseCount == 0 &&
+                              _decreaseCount == 0) {
+                            final stateQuantity =
+                                state.cartItems
+                                    .firstWhere(
+                                      (cartItem) =>
+                                          cartItem.id == widget.item.id,
+                                      orElse: () => widget.item,
+                                    )
+                                    .quantity;
+
+                            if (_pendingQuantity != stateQuantity) {
+                              _pendingQuantity = stateQuantity;
+                            }
+                          }
+
                           return Text(
-                            quantity.toString(),
+                            _pendingQuantity.toString(),
                             style: Theme.of(context).textTheme.titleMedium!
                                 .copyWith(fontWeight: FontWeight.bold),
                           );
@@ -118,12 +183,12 @@ class _CartItemState extends State<CartItem> {
                       const SizedBox(width: 5),
                       Container(
                         decoration: BoxDecoration(
-                          color: Colors.grey[200],
+                          color: Colors.grey[100],
                           shape: BoxShape.circle,
                         ),
                         child: IconButton(
-                          icon: const Icon(Icons.remove),
-                          onPressed: decrease,
+                          icon: const Icon(Icons.add),
+                          onPressed: increase,
                           padding: const EdgeInsets.all(8),
                         ),
                       ),

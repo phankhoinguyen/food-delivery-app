@@ -18,7 +18,7 @@ import 'package:food_delivery/features/setting/profile/presentation/cubits/profi
 import 'package:food_delivery/features/setting/profile/presentation/cubits/profile_state.dart';
 import 'package:food_delivery/features/setting/presentation/setting_page.dart';
 import 'package:food_delivery/core/theme/my_color.dart';
-import 'package:food_delivery/widgets/home/product_item.dart';
+import 'package:food_delivery/core/widgets/home/product_item.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
 import 'package:popover/popover.dart';
 

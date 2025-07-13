@@ -4,7 +4,7 @@ import 'package:food_delivery/features/auth/presentation/cubits/auth_cubits.dart
 import 'package:food_delivery/features/favorite/data/favorite_repo_firestore.dart';
 import 'package:food_delivery/features/favorite/presentation/cubits/favorite_cubits.dart';
 import 'package:food_delivery/features/favorite/presentation/cubits/favorite_state.dart';
-import 'package:food_delivery/widgets/favorite/favorite_item.dart';
+import 'package:food_delivery/core/widgets/favorite/favorite_item.dart';
 
 class FavoritePage extends StatefulWidget {
   const FavoritePage({super.key});
