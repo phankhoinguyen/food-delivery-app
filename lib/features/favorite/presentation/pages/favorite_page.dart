@@ -29,7 +29,6 @@ class _FavoritePageState extends State<FavoritePage> {
             if (state is FavoLoaded || state is FavoSuccess) {
               final listItem = context.read<FavoriteCubits>().listFavo;
               final listProduct = context.read<FavoriteCubits>().listProduct;
-              print(listProduct);
               if (listItem.isEmpty) {
                 return const Center(child: Text('No favorite food yet'));
               }

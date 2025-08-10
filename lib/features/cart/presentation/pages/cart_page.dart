@@ -43,13 +43,14 @@ class _CartPageState extends State<CartPage> {
       ),
       body: BlocBuilder<CartBloc, CartState>(
         builder: (context, state) {
+          print(size.height);
           cartItems = state.cartItems;
           return Stack(
             children: [
               Container(
                 decoration: const BoxDecoration(color: MyColor.imageBackground),
                 width: double.infinity,
-                height: 900,
+                height: size.height,
                 child: Image.asset(
                   'assets/food_pattern.png',
                   repeat: ImageRepeat.repeatY,
@@ -58,170 +59,158 @@ class _CartPageState extends State<CartPage> {
               ),
               (state is CartLoading && state.cartItems.isEmpty)
                   ? const Center(child: CircularProgressIndicator())
-                  : Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      SizedBox(height: size.height * .13),
-                      SizedBox(
-                        height: size.height * 0.53,
-                        child:
-                            cartItems!.isEmpty
-                                ? Center(
-                                  child: Text(
-                                    'Your cart is empty',
-                                    style:
-                                        Theme.of(context).textTheme.titleMedium,
-                                  ),
-                                )
-                                : ListView.builder(
-                                  padding: const EdgeInsets.all(10),
-                                  itemCount: cartItems!.length,
-                                  itemBuilder: (context, index) {
-                                    final item = cartItems![index];
-                                    return CartItem(
-                                      item: item,
-                                      onDismissed: () {
-                                        context.read<CartBloc>().add(
-                                          RemoveFromCart(item),
-                                        );
-                                      },
-                                    );
-                                  },
-                                ),
-                      ),
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 10,
-                            horizontal: 25,
-                          ),
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            color: Colors.grey.withOpacity(0.25),
-                            borderRadius:
-                                const BorderRadiusDirectional.vertical(
-                                  top: const Radius.circular(20),
-                                ),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text('DELIVERY ADDRESS'),
-                              const SizedBox(height: 7),
-                              BlocConsumer<AddressPageCubits, AddressPageState>(
-                                listener: (context, state) {},
-                                builder: (context, state) {
-                                  logger.w(state);
-                                  if (state is AddressPageLoaded) {
-                                    place = state.listPlace.last;
-                                    address = place!.displayName;
-                                  }
-                                  if (state is AddressChoosen) {
-                                    place = state.place;
-                                    address = place!.displayName;
-                                  }
-
-                                  return GestureDetector(
-                                    onTap: () {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder:
-                                              (context) => const AddressPage(
-                                                isCartPage: true,
-                                              ),
-                                        ),
+                  : SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        SizedBox(height: size.height * .13),
+                        SizedBox(
+                          height: size.height * 0.5,
+                          child:
+                              cartItems!.isEmpty
+                                  ? Center(
+                                    child: Text(
+                                      'Your cart is empty',
+                                      style:
+                                          Theme.of(
+                                            context,
+                                          ).textTheme.titleMedium,
+                                    ),
+                                  )
+                                  : ListView.builder(
+                                    padding: const EdgeInsets.all(10),
+                                    itemCount: cartItems!.length,
+                                    itemBuilder: (context, index) {
+                                      final item = cartItems![index];
+                                      return CartItem(
+                                        item: item,
+                                        onDismissed: () {
+                                          context.read<CartBloc>().add(
+                                            RemoveFromCart(item),
+                                          );
+                                        },
                                       );
                                     },
-                                    child: Container(
-                                      width: 350,
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: 10,
-                                        horizontal: 10,
-                                      ),
-                                      child: Text(
-                                        address ??
-                                            '2118 Thornridge Cir. Syracuse',
-                                        style: Theme.of(
-                                          context,
-                                        ).textTheme.titleMedium!.copyWith(
-                                          color: const Color(0xff32343E),
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                              const SizedBox(height: 10),
-                              Align(
-                                alignment: Alignment.centerRight,
-                                child: RichText(
-                                  text: TextSpan(
-                                    children: [
-                                      TextSpan(
-                                        text: 'TOTAL: ',
-                                        style:
-                                            Theme.of(
-                                              context,
-                                            ).textTheme.bodyLarge,
-                                      ),
-                                      TextSpan(
-                                        text:
-                                            '\$ ${state.totalPrice.toStringAsFixed(2)}',
-                                        style:
-                                            Theme.of(
-                                              context,
-                                            ).textTheme.titleLarge,
-                                      ),
-                                    ],
                                   ),
+                        ),
+                      ],
+                    ),
+                  ),
+              Positioned(
+                bottom: 0,
+                right: 0,
+                left: 0,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 10,
+                    horizontal: 25,
+                  ),
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.grey.withOpacity(0.5),
+                    borderRadius: const BorderRadiusDirectional.vertical(
+                      top: const Radius.circular(20),
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('DELIVERY ADDRESS'),
+                      const SizedBox(height: 7),
+                      BlocConsumer<AddressPageCubits, AddressPageState>(
+                        listener: (context, state) {},
+                        builder: (context, state) {
+                          logger.w(state);
+                          if (state is AddressPageLoaded) {
+                            place = state.listPlace.last;
+                            address = place!.displayName;
+                          }
+                          if (state is AddressChoosen) {
+                            place = state.place;
+                            address = place!.displayName;
+                          }
+
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) =>
+                                          const AddressPage(isCartPage: true),
                                 ),
+                              );
+                            },
+                            child: Container(
+                              width: 350,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 10,
+                                horizontal: 10,
+                              ),
+                              child: Text(
+                                address ?? '2118 Thornridge Cir. Syracuse',
+                                style: Theme.of(context).textTheme.titleMedium!
+                                    .copyWith(color: const Color(0xff32343E)),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 10),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: 'TOTAL: ',
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              ),
+                              TextSpan(
+                                text:
+                                    '\$ ${state.totalPrice.toStringAsFixed(2)}',
+                                style: Theme.of(context).textTheme.titleLarge,
                               ),
                             ],
                           ),
                         ),
                       ),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          fixedSize: Size(size.width * .85, size.height * .07),
+
+                          backgroundColor: MyColor.primary,
+                        ),
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder:
+                                  (context) =>
+                                      PaymentPage(listProduct: cartItems!),
+                            ),
+                          );
+                        },
+                        child: Text(
+                          'PLACE ORDER',
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodyMedium!.copyWith(
+                            color: Colors.white,
+                            fontSize: 18,
+                            letterSpacing: 1.3,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
+                ),
+              ),
             ],
           );
         },
-      ),
-      floatingActionButtonLocation:
-          FloatingActionButtonLocation.miniCenterFloat,
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 15),
-        child: FloatingActionButton.extended(
-          elevation: 0,
-          backgroundColor: Colors.transparent,
-          onPressed: () {},
-          label: MaterialButton(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(40),
-            ),
-            height: 55,
-            minWidth: 350,
-            color: MyColor.primary,
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => PaymentPage(listProduct: cartItems!),
-                ),
-              );
-            },
-            child: Text(
-              'PLACE ORDER',
-              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                color: Colors.white,
-                fontSize: 18,
-                letterSpacing: 1.3,
-              ),
-            ),
-          ),
-        ),
       ),
     );
   }

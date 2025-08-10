@@ -64,31 +64,33 @@ class _HomePageState extends State<HomePage> {
             ctx.read<ProductCubits>().getProductByCate(selectedCategory!);
             return Scaffold(
               appBar: homeAppbar(ctx),
-              body: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 15,
-                      horizontal: 25,
+              body: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 15,
+                        horizontal: 25,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          homeBanner(context),
+                          const SizedBox(height: 25),
+                          Text(
+                            'Categories',
+                            style: Theme.of(context).textTheme.headlineLarge,
+                          ),
+                        ],
+                      ),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        homeBanner(context),
-                        const SizedBox(height: 25),
-                        Text(
-                          'Categories',
-                          style: Theme.of(context).textTheme.headlineLarge,
-                        ),
-                      ],
-                    ),
-                  ),
-                  homeCategory(listCategory),
-                  const SizedBox(height: 25),
-                  homeViewAll(context, ctx),
-                  const SizedBox(height: 20),
-                  homeProduct(listCategory, size),
-                ],
+                    homeCategory(listCategory),
+                    const SizedBox(height: 25),
+                    homeViewAll(context, ctx),
+                    const SizedBox(height: 20),
+                    homeProduct(listCategory, size),
+                  ],
+                ),
               ),
             );
           }
@@ -326,16 +328,17 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Expanded homeProduct(List<CategoryModel> listCategory, Size size) {
-    return Expanded(
-      child: BlocBuilder<FavoriteCubits, FavoriteState>(
-        builder: (context, favState) {
-          if (favState is FavoLoaded || favState is FavoSuccess) {
-            return BlocConsumer<ProductCubits, ProductState>(
-              builder: (context, state) {
-                if (state is ProductSuccess) {
-                  final listProduct = state.listProducts;
-                  return ListView.builder(
+  Widget homeProduct(List<CategoryModel> listCategory, Size size) {
+    return BlocBuilder<FavoriteCubits, FavoriteState>(
+      builder: (context, favState) {
+        if (favState is FavoLoaded || favState is FavoSuccess) {
+          return BlocConsumer<ProductCubits, ProductState>(
+            builder: (context, state) {
+              if (state is ProductSuccess) {
+                final listProduct = state.listProducts;
+                return SizedBox(
+                  height: size.height * .4,
+                  child: ListView.builder(
                     physics: const BouncingScrollPhysics(),
                     itemCount: listProduct.length,
                     scrollDirection: Axis.horizontal,
@@ -351,35 +354,35 @@ class _HomePageState extends State<HomePage> {
                         ),
                       );
                     },
-                  );
-                }
+                  ),
+                );
+              }
 
-                return const Center(child: CircularProgressIndicator());
-              },
-              listener: (context, state) {
-                if (state is ProductError) {
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: const Text('Try again!'),
-                        content: Text(state.msg),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            child: const Text('Close'),
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                }
-              },
-            );
-          }
-          return const Center(child: CircularProgressIndicator());
-        },
-      ),
+              return const Center(child: CircularProgressIndicator());
+            },
+            listener: (context, state) {
+              if (state is ProductError) {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: const Text('Try again!'),
+                      content: Text(state.msg),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: const Text('Close'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              }
+            },
+          );
+        }
+        return const Center(child: CircularProgressIndicator());
+      },
     );
   }
 
