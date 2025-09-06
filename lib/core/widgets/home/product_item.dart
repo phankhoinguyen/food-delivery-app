@@ -115,9 +115,13 @@ class _ProductItemState extends State<ProductItem> {
                   ),
                 ),
                 // const SizedBox(height: 15),
-                Text(
-                  widget.product.name,
-                  style: Theme.of(context).textTheme.headlineLarge,
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    widget.product.name,
+                    style: Theme.of(context).textTheme.headlineLarge,
+                    maxLines: 1,
+                  ),
                 ),
                 // const SizedBox(height: 15),
                 FittedBox(
