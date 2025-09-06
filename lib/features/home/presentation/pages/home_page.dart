@@ -40,8 +40,6 @@ class _HomePageState extends State<HomePage> {
 
     final favoriteRepo = FavoriteRepoFirestore(user!);
     final size = MediaQuery.of(context).size;
-    print(size.height);
-    print(size.width);
     return MultiBlocProvider(
       providers: [
         BlocProvider(
@@ -237,7 +235,7 @@ class _HomePageState extends State<HomePage> {
         const Spacer(),
         Builder(
           builder:
-              (appnarContext) => GestureDetector(
+              (appbarContext) => GestureDetector(
                 onTap: () {
                   showPopover(
                     transitionDuration: const Duration(milliseconds: 150),
@@ -245,7 +243,7 @@ class _HomePageState extends State<HomePage> {
                     backgroundColor: Colors.blueGrey[100]!,
                     height: 50,
                     width: 180,
-                    context: appnarContext,
+                    context: appbarContext,
                     bodyBuilder: (ctx) {
                       return Column(
                         children: [
@@ -494,7 +492,7 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 10),
                 Container(
                   padding: const EdgeInsets.symmetric(
                     vertical: 9,

@@ -122,8 +122,10 @@ class _CartPageState extends State<CartPage> {
                         builder: (context, state) {
                           logger.w(state);
                           if (state is AddressPageLoaded) {
-                            place = state.listPlace.last;
-                            address = place!.displayName;
+                            if (state.listPlace.isNotEmpty) {
+                              place = state.listPlace.last;
+                              address = place?.displayName;
+                            }
                           }
                           if (state is AddressChoosen) {
                             place = state.place;

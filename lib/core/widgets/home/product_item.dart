@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:food_delivery/core/constants/helper.dart';
 import 'package:food_delivery/features/cart/presentation/bloc/cart_bloc.dart';
 import 'package:food_delivery/features/favorite/domain/entities/favorite_model.dart';
 import 'package:food_delivery/features/favorite/presentation/cubits/favorite_cubits.dart';
@@ -100,7 +101,7 @@ class _ProductItemState extends State<ProductItem> {
               top: 5,
             ),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Hero(
                   tag: widget.product.name,
@@ -113,37 +114,40 @@ class _ProductItemState extends State<ProductItem> {
                         (context, url) => const CircularProgressIndicator(),
                   ),
                 ),
-                const SizedBox(height: 15),
+                // const SizedBox(height: 15),
                 Text(
                   widget.product.name,
                   style: Theme.of(context).textTheme.headlineLarge,
                 ),
-                const SizedBox(height: 15),
-                Text(
-                  widget.product.specialItems,
-                  style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                    fontSize: 15,
-                    height: 0.1,
-                    letterSpacing: 0.5,
+                // const SizedBox(height: 15),
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    widget.product.geoID,
+                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
+                      // fontSize: 15,
+                      letterSpacing: 0.5,
+                    ),
+                    maxLines: 1,
                   ),
                 ),
-                const SizedBox(height: 20),
+                // const SizedBox(height: 20),
                 RichText(
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: '\$ ',
-                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: MyColor.primary,
-                        ),
-                      ),
-                      TextSpan(
-                        text: widget.product.price.toString(),
+                        text: widget.product.price.toVND(),
                         style: Theme.of(
                           context,
                         ).textTheme.headlineLarge!.copyWith(fontSize: 25),
+                      ),
+                      TextSpan(
+                        text: ' VNĐ',
+                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: MyColor.primary,
+                        ),
                       ),
                     ],
                   ),

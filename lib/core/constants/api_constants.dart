@@ -5,6 +5,8 @@ class ApiConstants {
   static String get googleApiKey => dotenv.env['GOOGLE_API_KEY'] ?? '';
 
   // Base URLs
+  static String baseUrl = dotenv.env['BASE_URL'] ?? '';
+
   static const String placesBaseUrl = 'https://places.googleapis.com/v1';
 
   static const String latLngUrl =
@@ -29,6 +31,12 @@ class ApiConstants {
   static Map<String, String> get mapsHeaders => {
     'Content-Type': 'application/json',
   };
+
+  static Map<String, String> authHeaders(String token) => {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer $token',
+  };
+
   static String buildGeocodingUrl(String placeId) {
     return '$latLngUrl?place_id=$placeId&key=$googleApiKey';
   }

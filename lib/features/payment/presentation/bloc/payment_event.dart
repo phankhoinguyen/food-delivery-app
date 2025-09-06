@@ -36,15 +36,17 @@ class SelectPaymentMethod extends PaymentEvent {
   List<Object?> get props => [paymentType];
 }
 
-class LinkPaymentMethod extends PaymentEvent {
-  final PaymentType paymentType;
+class ProcessPayment extends PaymentEvent {
+  final String orderId;
+  final double amount;
+  final String paymentMethod;
 
-  const LinkPaymentMethod(this.paymentType);
+  const ProcessPayment({
+    required this.orderId,
+    required this.amount,
+    required this.paymentMethod,
+  });
 
   @override
-  List<Object?> get props => [paymentType];
-}
-
-class ProcessPayment extends PaymentEvent {
-  const ProcessPayment();
+  List<Object?> get props => [orderId, amount, paymentMethod];
 }

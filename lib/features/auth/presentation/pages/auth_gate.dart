@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:food_delivery/features/auth/data/firebase_auth_repo.dart';
 import 'package:food_delivery/features/auth/presentation/cubits/auth_cubits.dart';
 import 'package:food_delivery/features/auth/presentation/cubits/auth_state.dart';
 import 'package:food_delivery/features/auth/presentation/pages/auth_page.dart';
@@ -9,9 +8,8 @@ import 'package:food_delivery/features/setting/profile/presentation/cubits/profi
 import 'package:food_delivery/pages/main_page.dart';
 
 class AuthGate extends StatelessWidget {
-  AuthGate({super.key});
+  const AuthGate({super.key});
 
-  final authRepo = FirebaseAuthRepo();
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AuthCubits, AuthState>(

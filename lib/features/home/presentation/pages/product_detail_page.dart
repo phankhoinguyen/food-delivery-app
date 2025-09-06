@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:food_delivery/core/constants/helper.dart';
 import 'package:food_delivery/features/auth/domain/entities/app_user.dart';
 import 'package:food_delivery/features/auth/presentation/cubits/auth_cubits.dart';
 import 'package:food_delivery/features/cart/domain/entities/cart_model.dart';
@@ -12,10 +13,10 @@ import 'package:food_delivery/features/cart/presentation/pages/cart_page.dart';
 
 import 'package:food_delivery/features/home/domain/entities/product_model.dart';
 import 'package:food_delivery/core/theme/my_color.dart';
-import 'package:food_delivery/features/setting/address/presentation/pages/address_page.dart';
-import 'package:food_delivery/pages/main_page.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
+import 'package:popover/popover.dart';
 import 'package:readmore/readmore.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProductDetailPage extends StatefulWidget {
   final ProductModel product;
@@ -157,47 +158,135 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                         ),
                       ),
                       const SizedBox(height: 30),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                          Text(
+                            widget.product.name,
+                            style: Theme.of(context).textTheme.titleLarge,
+                          ),
+                          const SizedBox(height: 7),
+                          Row(
                             children: [
-                              Text(
-                                widget.product.name,
-                                style: Theme.of(context).textTheme.titleLarge,
+                              Builder(
+                                builder: (context) {
+                                  return GestureDetector(
+                                    onTap: () {
+                                      showPopover(
+                                        direction: PopoverDirection.top,
+                                        barrierColor: Colors.transparent,
+                                        transitionDuration: const Duration(
+                                          milliseconds: 150,
+                                        ),
+                                        radius: 20,
+                                        backgroundColor: Colors.white
+                                            .withValues(alpha: 0.78),
+                                        shadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(
+                                              0.15,
+                                            ),
+                                            blurRadius: 8,
+                                            offset: const Offset(0, 2),
+                                          ),
+                                        ],
+                                        height: 50,
+                                        width: 180,
+                                        context: context,
+                                        bodyBuilder: (ctx) {
+                                          return Column(
+                                            children: [
+                                              GestureDetector(
+                                                onTap: () async {
+                                                  final url = Uri.parse(
+                                                    widget.product.geolink,
+                                                  );
+                                                  await launchUrl(
+                                                    url,
+                                                    mode:
+                                                        LaunchMode
+                                                            .inAppBrowserView,
+                                                  );
+                                                },
+                                                child: SizedBox(
+                                                  height: 50,
+                                                  child: Center(
+                                                    child: Text(
+                                                      'Track Origin',
+                                                      style: Theme.of(context)
+                                                          .textTheme
+                                                          .titleMedium!
+                                                          .copyWith(
+                                                            color:
+                                                                Colors
+                                                                    .blue[600],
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            decoration:
+                                                                TextDecoration
+                                                                    .underline,
+                                                          ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(
+                                          Icons.location_on,
+                                          size: 16,
+                                          color: Colors.blue[600],
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          widget.product.geoID,
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.bodyLarge!.copyWith(
+                                            fontStyle: FontStyle.italic,
+                                            color: Colors.blue[600],
+                                            letterSpacing: 1.1,
+                                            fontWeight: FontWeight.w500,
+                                            decoration:
+                                                TextDecoration.underline,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
                               ),
-                              const SizedBox(height: 7),
-                              Text(
-                                widget.product.specialItems,
-                                style: Theme.of(
-                                  context,
-                                ).textTheme.bodyLarge!.copyWith(
-                                  letterSpacing: 1.1,
-                                  fontWeight: FontWeight.w300,
+                              const Spacer(),
+                              RichText(
+                                text: TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: widget.product.price.toVND(),
+                                      style:
+                                          Theme.of(
+                                            context,
+                                          ).textTheme.titleLarge,
+                                    ),
+                                    TextSpan(
+                                      text: ' VNĐ',
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.bodyLarge!.copyWith(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: MyColor.primary,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
-                          ),
-                          RichText(
-                            text: TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: '\$ ',
-                                  style: Theme.of(
-                                    context,
-                                  ).textTheme.bodyLarge!.copyWith(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: MyColor.primary,
-                                  ),
-                                ),
-                                TextSpan(
-                                  text: widget.product.price.toString(),
-                                  style: Theme.of(context).textTheme.titleLarge,
-                                ),
-                              ],
-                            ),
                           ),
                         ],
                       ),
@@ -214,8 +303,8 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                             '${widget.product.kcal.toString()} Kcal',
                           ),
                           infoItem(
-                            'assets/icons/time.png',
-                            widget.product.time,
+                            'assets/icons/unit.png',
+                            widget.product.unit,
                           ),
                         ],
                       ),

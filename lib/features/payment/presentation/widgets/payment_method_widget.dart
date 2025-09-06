@@ -7,21 +7,13 @@ import 'package:food_delivery/features/payment/presentation/bloc/payment_event.d
 import 'package:food_delivery/features/payment/presentation/bloc/payment_state.dart';
 
 class PaymentMethodWidget extends StatelessWidget {
-  const PaymentMethodWidget({
-    super.key,
-    required this.paymentMethod,
-    required this.isLinked,
-  });
+  const PaymentMethodWidget({super.key, required this.paymentMethod});
   final PaymentMethod paymentMethod;
-  final bool isLinked;
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<PaymentBloc, PaymentState>(
       builder: (context, state) {
-        final isMethodLinked =
-            state.linkedPaymentMethods[paymentMethod.type] ?? isLinked;
-
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: Row(
@@ -30,34 +22,15 @@ class PaymentMethodWidget extends StatelessWidget {
               const SizedBox(width: 10),
               Text(paymentMethod.title),
               const Spacer(),
-              if (isMethodLinked)
-                Radio<PaymentType>(
-                  value: paymentMethod.type,
-                  groupValue: state.selectedPaymentMethod,
-                  onChanged: (value) {
-                    if (value != null) {
-                      context.read<PaymentBloc>().add(
-                        SelectPaymentMethod(value),
-                      );
-                    }
-                  },
-                )
-              else
-                GestureDetector(
-                  onTap: () {
-                    context.read<PaymentBloc>().add(
-                      LinkPaymentMethod(paymentMethod.type),
-                    );
-                  },
-                  child: Text(
-                    'Link now',
-                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                      color: MyColor.myBlue,
-                      fontStyle: FontStyle.italic,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
+              Radio<PaymentType>(
+                value: paymentMethod.type,
+                groupValue: state.selectedPaymentMethod,
+                onChanged: (value) {
+                  if (value != null) {
+                    context.read<PaymentBloc>().add(SelectPaymentMethod(value));
+                  }
+                },
+              ),
             ],
           ),
         );

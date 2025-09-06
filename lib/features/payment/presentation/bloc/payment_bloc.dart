@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_delivery/features/cart/domain/entities/cart_model.dart';
-import 'package:food_delivery/features/payment/domain/payment_method.dart';
+import 'package:food_delivery/features/payment/domain/entities/payment_request.dart';
 import 'package:food_delivery/features/payment/domain/repo/payment_repo.dart';
 import 'package:food_delivery/features/payment/presentation/bloc/payment_event.dart';
 import 'package:food_delivery/features/payment/presentation/bloc/payment_state.dart';
@@ -12,7 +12,6 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
     on<PaymentInitialized>(_onPaymentInitialized);
     on<CalculateTotals>(_onCalculateTotals);
     on<SelectPaymentMethod>(_onSelectPaymentMethod);
-    on<LinkPaymentMethod>(_onLinkPaymentMethod);
     on<ProcessPayment>(_onProcessPayment);
   }
 
@@ -66,55 +65,60 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
     SelectPaymentMethod event,
     Emitter<PaymentState> emit,
   ) async {
-    // Check if the payment method is linked
-    if (state.linkedPaymentMethods[event.paymentType] == true) {
-      emit(state.copyWith(selectedPaymentMethod: event.paymentType));
-
-      try {
-        await paymentRepo.saveSelectedPaymentMethod(event.paymentType);
-      } catch (e) {
-        emit(
-          state.copyWith(
-            errorMessage: 'Failed to save payment method: ${e.toString()}',
-          ),
-        );
-      }
-    } else {
+    emit(state.copyWith(selectedPaymentMethod: event.paymentType));
+    try {
+      await paymentRepo.saveSelectedPaymentMethod(event.paymentType);
+    } catch (e) {
       emit(
-        state.copyWith(errorMessage: 'Please link this payment method first'),
+        state.copyWith(
+          errorMessage: 'Failed to save payment method: ${e.toString()}',
+        ),
       );
     }
   }
 
-  void _onLinkPaymentMethod(
-    LinkPaymentMethod event,
+  void _onProcessPayment(
+    ProcessPayment event,
     Emitter<PaymentState> emit,
-  ) {
-    // Mock linking a payment method
-    // In a real app, this would involve actual payment gateway integration
-    final updatedLinkedMethods = Map<PaymentType, bool>.from(
-      state.linkedPaymentMethods,
-    );
-    updatedLinkedMethods[event.paymentType] = true;
+  ) async {
+    emit(state.copyWith(isLoading: true, errorMessage: null));
 
-    emit(
-      state.copyWith(
-        linkedPaymentMethods: updatedLinkedMethods,
-        selectedPaymentMethod: event.paymentType,
-      ),
-    );
-  }
+    try {
+      final paymentRequest = PaymentRequest(
+        orderId: event.orderId,
+        amount: event.amount,
+        paymentMethod: event.paymentMethod,
+      );
 
-  void _onProcessPayment(ProcessPayment event, Emitter<PaymentState> emit) {
-    // Mock payment processing
-    // In a real app, this would involve actual payment processing
-    emit(state.copyWith(isLoading: true));
+      // Process payment through repository
+      final paymentResponse = await paymentRepo.processPayment(paymentRequest);
 
-    // Simulate payment processing delay
-    Future.delayed(const Duration(seconds: 2), () {
-      emit(state.copyWith(isLoading: false));
-      // Here you would navigate to a success page or show a success dialog
-    });
+      if (paymentResponse.success) {
+        emit(
+          state.copyWith(
+            isLoading: false,
+            paymentResponse: paymentResponse,
+            isPaymentSuccessful: true,
+          ),
+        );
+      } else {
+        emit(
+          state.copyWith(
+            isLoading: false,
+            errorMessage: paymentResponse.message,
+            isPaymentSuccessful: false,
+          ),
+        );
+      }
+    } catch (e) {
+      emit(
+        state.copyWith(
+          isLoading: false,
+          errorMessage: 'Payment failed: ${e.toString()}',
+          isPaymentSuccessful: false,
+        ),
+      );
+    }
   }
 
   double _calculateTotalFood(List<CartModel> cartItems) {

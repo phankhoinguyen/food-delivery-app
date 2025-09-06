@@ -2,14 +2,25 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:food_delivery/features/auth/domain/entities/app_user.dart';
 import 'package:food_delivery/features/auth/domain/repo/auth_repo.dart';
+import 'package:food_delivery/features/setting/address/presentation/pages/address_page.dart';
+import 'package:injectable/injectable.dart';
 
+@LazySingleton(as: AuthRepo)
 class FirebaseAuthRepo implements AuthRepo {
   final _auth = FirebaseAuth.instance;
   final _db = FirebaseFirestore.instance;
+
   @override
   Future<AppUser?> getCurrentUser() async {
     final currentUser = _auth.currentUser;
-    if (currentUser == null) return null;
+    if (currentUser != null) {
+      final token = await currentUser.getIdToken();
+      logger.w(token);
+    } else {
+      return null;
+    }
+
+    // if (currentUser == null) return null;
     return AppUser(uid: currentUser.uid, email: currentUser.email!, name: '');
   }
 
@@ -20,6 +31,9 @@ class FirebaseAuthRepo implements AuthRepo {
         email: email,
         password: password,
       );
+
+      final token = await userCredential.user!.getIdToken();
+      logger.w(token);
       return AppUser(uid: userCredential.user!.uid, email: email, name: '');
     } on FirebaseAuthException catch (e) {
       throw Exception(e.message);

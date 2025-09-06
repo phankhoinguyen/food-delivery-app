@@ -8,10 +8,11 @@ class ProductModel {
   final String name;
   final double price;
   final double rate;
-  final String specialItems;
+  final String geoID;
+  final String geolink;
   final String category;
   final int kcal;
-  final String time;
+  final String unit;
 
   ProductModel({
     required this.imageCard,
@@ -19,10 +20,11 @@ class ProductModel {
     required this.name,
     required this.price,
     required this.rate,
-    required this.specialItems,
+    required this.geoID,
+    required this.geolink,
     required this.category,
     required this.kcal,
-    required this.time,
+    required this.unit,
     required this.id,
   });
 
@@ -34,10 +36,11 @@ class ProductModel {
       name: json['name'] ?? 'Unknown',
       price: (json['price'] as num?)?.toDouble() ?? 0.0,
       rate: (json['rate'] as num?)?.toDouble() ?? 0.0,
-      specialItems: json['specialItems'] ?? '',
+      geoID: json['geoID'] ?? '',
+      geolink: json['geolink'] ?? '',
       category: json['category'] ?? '',
       kcal: json['kcal'] ?? '',
-      time: json['time'] ?? '',
+      unit: json['unit'] ?? '',
     );
   }
   Map<String, dynamic> toMap() {
@@ -48,10 +51,11 @@ class ProductModel {
       'name': name,
       'price': price,
       'rate': rate,
-      'specialItems': specialItems,
+      'geoID': geoID,
+      'geolink': geolink,
       'category': category,
       'kcal': kcal,
-      'time': time,
+      'unit': unit,
     };
   }
 }

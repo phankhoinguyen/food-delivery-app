@@ -20,8 +20,7 @@ class AddressRepositoryImpl implements AddressRepo {
   final _db = FirebaseFirestore.instance;
   final _currentUser = FirebaseAuth.instance.currentUser;
 
-  AddressRepositoryImpl({http.Client? httpClient})
-    : httpClient = httpClient ?? http.Client();
+  AddressRepositoryImpl(this.httpClient);
 
   @override
   Future<Either<Failure, List<PlacePrediction>>> searchPlaces({
