@@ -268,10 +268,10 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                                   children: [
                                     TextSpan(
                                       text: widget.product.price.toVND(),
-                                      style:
-                                          Theme.of(
-                                            context,
-                                          ).textTheme.titleLarge,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headlineLarge!
+                                          .copyWith(fontSize: 25),
                                     ),
                                     TextSpan(
                                       text: ' VNĐ',
@@ -391,14 +391,14 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
     );
   }
 
-  Row infoItem(src, value) {
+  Widget infoItem(src, value) {
     return Row(
       children: [
-        Image.asset(src, width: 25),
+        Image.asset(src, width: 20),
         const SizedBox(width: 10),
         Text(
           value,
-          style: Theme.of(context).textTheme.bodyMedium!.copyWith(fontSize: 16),
+          style: Theme.of(context).textTheme.bodyMedium!.copyWith(fontSize: 15),
         ),
       ],
     );
