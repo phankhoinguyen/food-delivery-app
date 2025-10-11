@@ -37,48 +37,6 @@ class _PaymentPageContent extends StatelessWidget {
 
   final List<CartModel> listProduct;
 
-  void _showPaymentSuccessDialog(
-    BuildContext context,
-    PaymentResponse response,
-  ) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Payment Successful!'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('Your payment has been processed successfully.'),
-              const SizedBox(height: 8),
-              if (response.data?.paymentId != null)
-                Text('Payment ID: ${response.data!.paymentId}'),
-              if (response.data?.deepLink != null) ...[
-                const SizedBox(height: 8),
-                Text('Deep Link: ${response.data!.deepLink}'),
-              ],
-              if (response.data?.qrCodeUrl != null) ...[
-                const SizedBox(height: 8),
-                Text('QR Code URL: ${response.data!.qrCodeUrl}'),
-              ],
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close dialog
-                Navigator.of(context).pop(); // Go back to previous page
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   void _showPaymentErrorDialog(BuildContext context, String errorMessage) {
     showDialog(
       context: context,
@@ -106,8 +64,7 @@ class _PaymentPageContent extends StatelessWidget {
     return BlocListener<PaymentBloc, PaymentState>(
       listener: (context, state) {
         if (state.isPaymentSuccessful && state.paymentResponse != null) {
-          // Show success dialog or navigate to success page
-          _showPaymentSuccessDialog(context, state.paymentResponse!);
+          print('success');
         } else if (state.errorMessage != null) {
           // Show error dialog
           _showPaymentErrorDialog(context, state.errorMessage!);

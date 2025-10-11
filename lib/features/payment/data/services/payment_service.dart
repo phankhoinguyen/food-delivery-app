@@ -21,7 +21,7 @@ class PaymentService {
       final headers = ApiConstants.authHeaders(token ?? '');
 
       final response = await _httpClient.post(
-        Uri.parse('$baseUrl/momo'),
+        Uri.parse('$baseUrl/api/payment/momo'),
         headers: headers,
         body: json.encode(request.toJson()),
       );

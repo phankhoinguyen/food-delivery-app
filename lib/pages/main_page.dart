@@ -10,6 +10,7 @@ import 'package:food_delivery/features/cart/presentation/bloc/cart_state.dart';
 import 'package:food_delivery/features/cart/presentation/pages/cart_page.dart';
 import 'package:food_delivery/features/favorite/presentation/pages/favorite_page.dart';
 import 'package:food_delivery/features/home/presentation/pages/home_page.dart';
+import 'package:food_delivery/features/order/presentation/pages/order_page.dart';
 import 'package:food_delivery/pages/mock_demo.dart';
 import 'package:food_delivery/core/theme/my_color.dart';
 import 'package:iconsax_flutter/iconsax_flutter.dart';
@@ -29,6 +30,7 @@ class _MainPageState extends State<MainPage> {
     const FavoritePage(),
     const MockDemo(),
     const CartPage(),
+    const OrderPage(),
   ];
   int currentIndex = 0;
   @override
@@ -56,10 +58,9 @@ class _MainPageState extends State<MainPage> {
                 children: [
                   navItem(Iconsax.home_1, 'A', 0),
                   navItem(Iconsax.heart_copy, 'B', 1),
-                  const SizedBox(width: 90),
+                  navItem(Icons.store, 'E', 4),
                   navItem(Iconsax.notification_copy, 'C', 2),
                   Stack(
-                    clipBehavior: Clip.none,
                     children: [
                       navItem(Iconsax.shopping_cart_copy, 'D', 3),
                       Positioned(
@@ -74,19 +75,6 @@ class _MainPageState extends State<MainPage> {
                               fontSize: 12,
                               color: Colors.white,
                             ),
-                          ),
-                        ),
-                      ),
-                      const Positioned(
-                        top: -25,
-                        right: 140,
-                        child: CircleAvatar(
-                          radius: 35,
-                          backgroundColor: MyColor.primary,
-                          child: Icon(
-                            CupertinoIcons.search,
-                            size: 35,
-                            color: Colors.white,
                           ),
                         ),
                       ),

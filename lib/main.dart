@@ -17,13 +17,13 @@ import 'package:food_delivery/core/theme/light_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-  SystemChrome.setSystemUIOverlayStyle(
-    const SystemUiOverlayStyle(
-      systemNavigationBarColor: Colors.transparent,
-      statusBarColor: Colors.transparent,
-    ),
-  );
+  // SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  // SystemChrome.setSystemUIOverlayStyle(
+  //   const SystemUiOverlayStyle(
+  //     systemNavigationBarColor: Colors.transparent,
+  //     statusBarColor: Colors.transparent,
+  //   ),
+  // );
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await dotenv.load(fileName: ".env");
 

@@ -4,6 +4,8 @@ import 'package:food_delivery/features/payment/domain/entities/payment_request.d
 import 'package:food_delivery/features/payment/domain/repo/payment_repo.dart';
 import 'package:food_delivery/features/payment/presentation/bloc/payment_event.dart';
 import 'package:food_delivery/features/payment/presentation/bloc/payment_state.dart';
+import 'package:food_delivery/features/setting/address/presentation/pages/address_page.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
   final PaymentRepo paymentRepo;
@@ -90,10 +92,11 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
         paymentMethod: event.paymentMethod,
       );
 
-      // Process payment through repository
       final paymentResponse = await paymentRepo.processPayment(paymentRequest);
 
       if (paymentResponse.success) {
+        final url = Uri.parse(paymentResponse.data!.deepLink ?? '');
+        await launchUrl(url, mode: LaunchMode.externalApplication);
         emit(
           state.copyWith(
             isLoading: false,
@@ -111,6 +114,7 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
         );
       }
     } catch (e) {
+      logger.w(e.toString());
       emit(
         state.copyWith(
           isLoading: false,
