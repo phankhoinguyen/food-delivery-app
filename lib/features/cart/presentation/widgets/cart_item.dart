@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:food_delivery/core/constants/helper.dart';
+import 'package:food_delivery/core/theme/my_color.dart';
 import 'package:food_delivery/features/cart/domain/entities/cart_model.dart';
 import 'package:food_delivery/features/cart/presentation/bloc/cart_bloc.dart';
 import 'package:food_delivery/features/cart/presentation/bloc/cart_event.dart';
@@ -132,9 +134,25 @@ class _CartItemState extends State<CartItem> {
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 5),
-                  Text(
-                    '\$ ${widget.item.price}',
-                    style: Theme.of(context).textTheme.headlineLarge,
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        TextSpan(
+                          text: widget.item.price.toVND(),
+                          style: Theme.of(context).textTheme.headlineLarge,
+                        ),
+                        TextSpan(
+                          text: ' VNĐ',
+                          style: Theme.of(
+                            context,
+                          ).textTheme.bodyLarge!.copyWith(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: MyColor.primary,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 10),
                   Row(

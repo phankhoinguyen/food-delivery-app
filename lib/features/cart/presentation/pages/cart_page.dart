@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:food_delivery/core/constants/helper.dart';
 import 'package:food_delivery/features/cart/domain/entities/cart_model.dart';
 import 'package:food_delivery/features/cart/presentation/bloc/cart_bloc.dart';
 import 'package:food_delivery/features/cart/presentation/bloc/cart_event.dart';
@@ -172,9 +173,18 @@ class _CartPageState extends State<CartPage> {
                                 style: Theme.of(context).textTheme.bodyLarge,
                               ),
                               TextSpan(
-                                text:
-                                    '\$ ${state.totalPrice.toStringAsFixed(2)}',
+                                text: state.totalPrice.toVND(),
                                 style: Theme.of(context).textTheme.titleLarge,
+                              ),
+                              TextSpan(
+                                text: ' VNĐ',
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.bodyLarge!.copyWith(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: MyColor.primary,
+                                ),
                               ),
                             ],
                           ),

@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:food_delivery/core/constants/helper.dart';
 import 'package:food_delivery/features/cart/presentation/bloc/cart_bloc.dart';
 import 'package:food_delivery/features/favorite/domain/entities/favorite_model.dart';
 import 'package:food_delivery/features/favorite/presentation/cubits/favorite_cubits.dart';
@@ -56,7 +57,7 @@ class FavoriteItem extends StatelessWidget {
                         item.name,
                         style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                           fontWeight: FontWeight.bold,
-                          fontSize: 15,
+                          fontSize: 14,
                         ),
                       ),
                       Text(
@@ -66,12 +67,26 @@ class FavoriteItem extends StatelessWidget {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      Text(
-                        '\$ ${item.price.toString()}',
-                        style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                          color: MyColor.primary,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
+                      RichText(
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text: item.price.toVND(),
+                              style: Theme.of(
+                                context,
+                              ).textTheme.headlineLarge!.copyWith(fontSize: 20),
+                            ),
+                            TextSpan(
+                              text: ' VNĐ',
+                              style: Theme.of(
+                                context,
+                              ).textTheme.bodyLarge!.copyWith(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: MyColor.primary,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
