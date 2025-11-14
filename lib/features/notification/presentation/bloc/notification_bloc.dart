@@ -37,7 +37,10 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   ) async {
     try {
       final unreadQuantity = await repo.getUnreadNoifications();
-      emit(state.copyWith(unreadQuantity: unreadQuantity));
+      if (unreadQuantity > 0) {
+        emit(state.copyWith(unreadQuantity: unreadQuantity));
+      }
+      print(state.unreadQuantity);
     } catch (e) {
       rethrow;
     }

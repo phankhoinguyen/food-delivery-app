@@ -27,14 +27,14 @@ class _NotificationPageState extends State<NotificationPage> {
         listener: (context, state) {},
         builder: (context, state) {
           final listItem = state.listNoti;
-          if (listItem!.isEmpty && state.isLoading == false) {
+          if (listItem?.isEmpty == true && state.isLoading == false) {
             return const Center(child: Text('No notifications yet'));
           }
           if (state.isLoading == true) {
             return const Center(child: CircularProgressIndicator());
           }
           return ListView.builder(
-            itemCount: listItem.length,
+            itemCount: listItem!.length,
             itemBuilder:
                 (context, index) => NotificationItem(item: listItem[index]),
           );

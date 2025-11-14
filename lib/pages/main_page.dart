@@ -11,7 +11,6 @@ import 'package:food_delivery/features/cart/presentation/bloc/cart_state.dart';
 import 'package:food_delivery/features/cart/presentation/pages/cart_page.dart';
 import 'package:food_delivery/features/favorite/presentation/pages/favorite_page.dart';
 import 'package:food_delivery/features/home/presentation/pages/home_page.dart';
-import 'package:food_delivery/features/notification/domain/repo/notification_repo.dart';
 import 'package:food_delivery/features/notification/presentation/bloc/notification_bloc.dart';
 import 'package:food_delivery/features/notification/presentation/bloc/notification_event.dart';
 import 'package:food_delivery/features/notification/presentation/bloc/notification_state.dart';
@@ -78,26 +77,26 @@ class _MainPageState extends State<MainPage> {
                 listener: (context, state) {},
                 builder: (context, state) {
                   int? unreadQuantity = state.unreadQuantity;
+                  print(unreadQuantity);
                   return Stack(
                     children: [
                       navItem(Iconsax.notification_copy, 'C', 2),
-                      (unreadQuantity != null && unreadQuantity != 0)
-                          ? Positioned(
-                            top: 16,
-                            right: 3,
-                            child: CircleAvatar(
-                              radius: 10,
-                              backgroundColor: MyColor.primary,
-                              child: Text(
-                                unreadQuantity.toString(),
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.white,
-                                ),
+                      if (unreadQuantity != null)
+                        Positioned(
+                          top: 16,
+                          right: 3,
+                          child: CircleAvatar(
+                            radius: 10,
+                            backgroundColor: MyColor.primary,
+                            child: Text(
+                              unreadQuantity.toString(),
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: Colors.white,
                               ),
                             ),
-                          )
-                          : const SizedBox(),
+                          ),
+                        ),
                     ],
                   );
                 },

@@ -8,8 +8,17 @@ class OrderCard extends StatelessWidget {
   const OrderCard({super.key, required this.orderItem});
   final OrderEntity orderItem;
 
+  (Color, Color) get _colors => switch (orderItem.preparationStatus
+      .toLowerCase()) {
+    'pending' => (MyColor.primary.withValues(alpha: 0.20), MyColor.primary),
+    'preparing' => (MyColor.myBlue.withValues(alpha: 0.20), MyColor.myBlue),
+    'completed' => (MyColor.success.withValues(alpha: 0.20), MyColor.success),
+    _ => (Colors.grey.shade100, Colors.grey.shade700),
+  };
+
   @override
   Widget build(BuildContext context) {
+    final (bgColor, textColor) = _colors;
     return Container(
       margin: const EdgeInsets.all(10),
       padding: const EdgeInsets.all(10),
@@ -24,19 +33,13 @@ class OrderCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
             decoration: BoxDecoration(
-              color:
-                  orderItem.preparationStatus == 'completed'
-                      ? MyColor.success.withValues(alpha: 0.15)
-                      : MyColor.primary.withValues(alpha: 0.15),
+              color: bgColor,
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
               orderItem.preparationStatus.capitalize(),
               style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                color:
-                    orderItem.preparationStatus == 'completed'
-                        ? MyColor.success
-                        : MyColor.primary,
+                color: textColor,
                 fontWeight: FontWeight.bold,
               ),
             ),
