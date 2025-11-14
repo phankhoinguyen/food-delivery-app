@@ -14,6 +14,7 @@ class FirebaseAuthRepo implements AuthRepo {
   Future<AppUser?> getCurrentUser() async {
     final currentUser = _auth.currentUser;
     if (currentUser != null) {
+      //notification init
       final token = await currentUser.getIdToken();
       logger.w(token);
     } else {

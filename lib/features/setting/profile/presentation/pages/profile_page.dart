@@ -159,7 +159,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                                 shape: const CircleBorder(),
                                               ),
                                               child: Image.asset(
-                                                'assets/icons/gallery.png',
+                                                'assets/icons/collection.png',
                                               ),
                                             ),
                                           ],

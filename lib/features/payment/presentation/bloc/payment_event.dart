@@ -40,13 +40,17 @@ class ProcessPayment extends PaymentEvent {
   final String orderId;
   final double amount;
   final String paymentMethod;
+  final String address;
+  final List<CartModel> items;
 
   const ProcessPayment({
+    required this.address,
     required this.orderId,
     required this.amount,
     required this.paymentMethod,
+    required this.items,
   });
 
   @override
-  List<Object?> get props => [orderId, amount, paymentMethod];
+  List<Object?> get props => [orderId, amount, paymentMethod, items, address];
 }

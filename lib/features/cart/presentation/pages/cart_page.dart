@@ -198,10 +198,16 @@ class _CartPageState extends State<CartPage> {
                         ),
                         onPressed: () {
                           Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder:
-                                  (context) =>
-                                      PaymentPage(listProduct: cartItems!),
+                            PageRouteBuilder(
+                              transitionDuration: const Duration(seconds: 1),
+                              pageBuilder:
+                                  (_, _, _) => BlocProvider.value(
+                                    value: BlocProvider.of<CartBloc>(context),
+                                    child: PaymentPage(
+                                      listProduct: cartItems!,
+                                      address: address!,
+                                    ),
+                                  ),
                             ),
                           );
                         },

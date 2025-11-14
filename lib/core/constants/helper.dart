@@ -6,3 +6,12 @@ extension CurrencyFormat on num {
     return formatter.format(this);
   }
 }
+
+extension StringExtension on String {
+  String capitalize() {
+    if (isEmpty) return this;
+    return '${this[0].toUpperCase()}${substring(1)}';
+  }
+
+  // Hoặc in hoa chữ cái đầu mỗi từ
+}

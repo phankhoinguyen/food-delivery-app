@@ -4,6 +4,7 @@ import 'package:food_delivery/features/payment/data/services/payment_service.dar
 import 'package:food_delivery/features/payment/data/vnpay_method.dart';
 import 'package:food_delivery/features/payment/domain/entities/payment_request.dart';
 import 'package:food_delivery/features/payment/domain/entities/payment_response.dart';
+import 'package:food_delivery/features/payment/domain/entities/payment_status.dart';
 import 'package:food_delivery/features/payment/domain/payment_method.dart';
 import 'package:food_delivery/features/payment/domain/repo/payment_repo.dart';
 import 'package:injectable/injectable.dart';
@@ -65,5 +66,10 @@ class PaymentRepoImpl implements PaymentRepo {
       default:
         throw Exception('Unsupported payment method: ${request.paymentMethod}');
     }
+  }
+
+  @override
+  Future<PaymentStatus> checkPaymentStatus(String orderId) async {
+    return _paymentService.checkPaymentStatus(orderId);
   }
 }

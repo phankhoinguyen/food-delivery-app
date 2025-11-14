@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:food_delivery/core/constants/helper.dart';
 import 'package:food_delivery/features/cart/domain/entities/cart_model.dart';
 
 class PaymentProduct extends StatelessWidget {
@@ -45,7 +46,7 @@ class PaymentProduct extends StatelessWidget {
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     Text(
-                      ' Total: \$ ${itemTotal.toStringAsFixed(2)}',
+                      ' Cost: ${itemTotal.toVND()} đ',
                       style: Theme.of(context).textTheme.headlineLarge,
                     ),
                   ],

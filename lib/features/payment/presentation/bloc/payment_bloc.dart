@@ -86,30 +86,44 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
     emit(state.copyWith(isLoading: true, errorMessage: null));
 
     try {
+      final List<Map<String, dynamic>> listItems =
+          event.items.map((item) {
+            return item.toJson();
+          }).toList();
       final paymentRequest = PaymentRequest(
         orderId: event.orderId,
         amount: event.amount,
         paymentMethod: event.paymentMethod,
+        items: listItems,
+        address: event.address,
       );
-
       final paymentResponse = await paymentRepo.processPayment(paymentRequest);
-
-      if (paymentResponse.success) {
-        final url = Uri.parse(paymentResponse.data!.deepLink ?? '');
-        await launchUrl(url, mode: LaunchMode.externalApplication);
+      if (event.paymentMethod.toLowerCase() == 'momo') {
+        if (paymentResponse.success) {
+          final url = Uri.parse(paymentResponse.data!.deepLink ?? '');
+          await launchUrl(url, mode: LaunchMode.externalApplication);
+          emit(
+            state.copyWith(
+              isLoading: false,
+              paymentResponse: paymentResponse,
+              isPaymentSuccessful: true,
+            ),
+          );
+        } else {
+          emit(
+            state.copyWith(
+              isLoading: false,
+              errorMessage: paymentResponse.message,
+              isPaymentSuccessful: false,
+            ),
+          );
+        }
+      } else {
         emit(
           state.copyWith(
             isLoading: false,
             paymentResponse: paymentResponse,
             isPaymentSuccessful: true,
-          ),
-        );
-      } else {
-        emit(
-          state.copyWith(
-            isLoading: false,
-            errorMessage: paymentResponse.message,
-            isPaymentSuccessful: false,
           ),
         );
       }

@@ -1,6 +1,10 @@
 import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:food_delivery/core/constants/api_constants.dart';
+import 'package:food_delivery/core/injection/injection.dart';
+import 'package:food_delivery/features/payment/domain/entities/payment_status.dart';
+import 'package:food_delivery/features/setting/address/presentation/pages/address_page.dart';
 import 'package:http/http.dart' as http;
 import 'package:injectable/injectable.dart';
 import 'package:food_delivery/features/payment/domain/entities/payment_request.dart';
@@ -11,20 +15,23 @@ class PaymentService {
   final baseUrl = ApiConstants.baseUrl;
   final auth = FirebaseAuth.instance.currentUser;
   final http.Client _httpClient;
-
+  final firebaseMessaging = getIt<FirebaseMessaging>();
   PaymentService(this._httpClient);
 
   /// Process MoMo payment
   Future<PaymentResponse> processMoMoPayment(PaymentRequest request) async {
     try {
+      final notificationUserToken = await firebaseMessaging.getToken();
       final token = await auth!.getIdToken();
       final headers = ApiConstants.authHeaders(token ?? '');
-
+      final body = request.toJson();
+      body['userToken'] = notificationUserToken;
       final response = await _httpClient.post(
         Uri.parse('$baseUrl/api/payment/momo'),
         headers: headers,
-        body: json.encode(request.toJson()),
+        body: json.encode(body),
       );
+      logger.w(request.toJson());
 
       if (response.statusCode == 200) {
         final responseData = json.decode(response.body) as Map<String, dynamic>;
@@ -34,6 +41,25 @@ class PaymentService {
       }
     } catch (e) {
       throw Exception('Payment error: $e');
+    }
+  }
+
+  Future<PaymentStatus> checkPaymentStatus(String orderId) async {
+    try {
+      final token = await auth!.getIdToken();
+      final headers = ApiConstants.authHeaders(token ?? '');
+      final response = await _httpClient.get(
+        Uri.parse('$baseUrl/api/payment/status/$orderId'),
+        headers: headers,
+      );
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body) as Map<String, dynamic>;
+        return PaymentStatus.fromJson(responseData);
+      } else {
+        throw Exception('Payment failed with status: ${response.statusCode}');
+      }
+    } catch (e) {
+      throw Exception('Status error: $e');
     }
   }
 

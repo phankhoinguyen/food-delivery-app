@@ -1,9 +1,8 @@
-import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:food_delivery/features/auth/presentation/pages/auth_gate.dart';
+import 'package:flutter/widget_previews.dart';
 import 'package:food_delivery/core/theme/my_color.dart';
-import 'package:lottie/lottie.dart';
 
+@Preview(name: 'splash')
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
 
@@ -21,16 +20,17 @@ class SplashScreen extends StatelessWidget {
             color: MyColor.imageBackground2,
           ),
           Center(
-            child: AnimatedSplashScreen(
-              splash: LottieBuilder.asset('assets/loading2.json'),
-              nextScreen: SafeArea(
-                bottom: false,
-                top: false,
-                child: AuthGate(),
-              ),
-              splashIconSize: 250,
-              // duration: 4800,
-            ),
+            // child: AnimatedSplashScreen(
+            //   splash: LottieBuilder.asset('assets/loading2.json'),
+            //   nextScreen: const SafeArea(
+            //     bottom: false,
+            //     top: false,
+            //     child: const AuthGate(),
+            //   ),
+            //   splashIconSize: 250,
+            //   // duration: 4800,
+            // ),
+            child: Image.asset('assets/logo.png'),
           ),
         ],
       ),

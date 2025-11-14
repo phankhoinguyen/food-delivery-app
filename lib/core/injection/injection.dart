@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:get_it/get_it.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,4 +25,9 @@ abstract class RegisterModule {
 
   @injectable
   http.Client get httpClient => http.Client();
+
+  @lazySingleton
+  FirebaseMessaging get mess => FirebaseMessaging.instance;
+  @lazySingleton
+  FirebaseAuth get auth => FirebaseAuth.instance;
 }

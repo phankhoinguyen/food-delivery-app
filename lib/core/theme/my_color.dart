@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class MyColor {
   static const primary = Color(0xFFFF7622);
+  static const success = Colors.lightGreen;
   // static const primary = Color.fromARGB(255, 93, 190, 243);
   static const orange = Color.fromARGB(255, 240, 199, 77);
   static const myBlue = Color.fromARGB(255, 40, 180, 231);
@@ -18,6 +19,7 @@ class MyColor {
   static const headerTextColor = Colors.white;
   static const darkText = Color(0xFF32343E);
   static const subText = Colors.white70;
-  static const hintText = Color(0xFFA0A5BA);
+  static const secondaryText = Colors.grey;
+  static const hintText = Color.fromARGB(255, 115, 118, 131);
   static const labelText = Color(0xFF32343E);
 }

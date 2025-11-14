@@ -1,24 +1,37 @@
+import 'dart:async';
+
+import 'package:app_links/app_links.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:food_delivery/core/constants/helper.dart';
 import 'package:food_delivery/core/injection/injection.dart';
 import 'package:food_delivery/core/theme/my_color.dart';
 import 'package:food_delivery/features/cart/domain/entities/cart_model.dart';
+import 'package:food_delivery/features/cart/presentation/bloc/cart_bloc.dart';
+import 'package:food_delivery/features/cart/presentation/bloc/cart_event.dart';
 import 'package:food_delivery/features/payment/data/cod_method.dart';
 import 'package:food_delivery/features/payment/data/momo_method.dart';
-import 'package:food_delivery/features/payment/domain/entities/payment_response.dart';
-import 'package:food_delivery/features/payment/domain/payment_method.dart';
+import 'package:food_delivery/features/payment/domain/entities/payment_redirect.dart';
 import 'package:food_delivery/features/payment/domain/repo/payment_repo.dart';
 import 'package:food_delivery/features/payment/presentation/bloc/payment_bloc.dart';
 import 'package:food_delivery/features/payment/presentation/bloc/payment_event.dart';
 import 'package:food_delivery/features/payment/presentation/bloc/payment_state.dart';
+import 'package:food_delivery/features/payment/presentation/check-status/bloc/payment_status_bloc.dart';
+import 'package:food_delivery/features/payment/presentation/check-status/pages/payment_status_page.dart';
 import 'package:food_delivery/features/payment/presentation/widgets/payment_method_widget.dart';
 import 'package:food_delivery/features/payment/presentation/widgets/payment_product.dart';
+import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
 class PaymentPage extends StatelessWidget {
-  const PaymentPage({super.key, required this.listProduct});
+  const PaymentPage({
+    super.key,
+    required this.listProduct,
+    required this.address,
+  });
 
   final List<CartModel> listProduct;
+  final String address;
 
   @override
   Widget build(BuildContext context) {
@@ -27,48 +40,80 @@ class PaymentPage extends StatelessWidget {
           (context) =>
               PaymentBloc(paymentRepo: getIt<PaymentRepo>())
                 ..add(PaymentInitialized(cartItems: listProduct)),
-      child: _PaymentPageContent(listProduct: listProduct),
+      child: _PaymentPageContent(listProduct: listProduct, address: address),
     );
   }
 }
 
-class _PaymentPageContent extends StatelessWidget {
-  const _PaymentPageContent({required this.listProduct});
+class _PaymentPageContent extends StatefulWidget {
+  const _PaymentPageContent({required this.listProduct, required this.address});
 
   final List<CartModel> listProduct;
+  final String address;
 
-  void _showPaymentErrorDialog(BuildContext context, String errorMessage) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Payment Failed'),
-          content: Text(errorMessage),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
+  @override
+  State<_PaymentPageContent> createState() => _PaymentPageContentState();
+}
+
+class _PaymentPageContentState extends State<_PaymentPageContent> {
+  StreamSubscription? sub;
+  @override
+  void initState() {
+    final appLinks = AppLinks();
+    sub = appLinks.uriLinkStream.listen((link) {
+      final orderId = link.queryParameters['orderId'];
+      final amount = link.queryParameters['amount'];
+      final responseTime = int.parse(link.queryParameters['responseTime']!);
+      DateTime dateTime =
+          DateTime.fromMillisecondsSinceEpoch(responseTime).toLocal();
+      String dayFormat = DateFormat('dd/MM/yyyy').format(dateTime);
+      String hoursFormat = DateFormat('HH:mm:ss').format(dateTime);
+      context.read<CartBloc>().add(GetCartList());
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder:
+              (context) => BlocProvider(
+                create: (context) => PaymentStatusBloc(getIt<PaymentRepo>()),
+                child: PaymentStatusPage(
+                  order: PaymentRedirect(
+                    dayTime: dayFormat,
+                    hoursTime: hoursFormat,
+                    orderId: orderId!,
+                    amount: amount!,
+                  ),
+                ),
+              ),
+        ),
+      );
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    sub?.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    print(widget.address);
+    const uuid = Uuid();
+    final orderId = uuid.v4().substring(0, 8);
     final size = MediaQuery.of(context).size;
 
     return BlocListener<PaymentBloc, PaymentState>(
       listener: (context, state) {
-        if (state.isPaymentSuccessful && state.paymentResponse != null) {
-          print('success');
-        } else if (state.errorMessage != null) {
-          // Show error dialog
-          _showPaymentErrorDialog(context, state.errorMessage!);
-        }
+        if (state.paymentResponse?.data?.paymentId == 'cod_payment') {
+          final amount = state.total;
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => PaymentStatusPage(codAmount: amount.toVND()),
+            ),
+          );
+        } else if (state.errorMessage != null) {}
       },
       child: BlocBuilder<PaymentBloc, PaymentState>(
         builder: (context, state) {
@@ -105,13 +150,14 @@ class _PaymentPageContent extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SizedBox(
-                            height: listProduct.length * 90,
+                            height: widget.listProduct.length * 90,
                             child: ListView.builder(
                               physics: const NeverScrollableScrollPhysics(),
-                              itemCount: listProduct.length,
+                              itemCount: widget.listProduct.length,
                               itemBuilder:
-                                  (context, index) =>
-                                      PaymentProduct(item: listProduct[index]),
+                                  (context, index) => PaymentProduct(
+                                    item: widget.listProduct[index],
+                                  ),
                             ),
                           ),
                           Text(
@@ -123,14 +169,14 @@ class _PaymentPageContent extends StatelessWidget {
                             children: [
                               const Text('Total of food'),
                               const Spacer(),
-                              Text(state.totalFood.toStringAsFixed(2)),
+                              Text(state.totalFood.toVND()),
                             ],
                           ),
                           Row(
                             children: [
                               const Text('Shipping cost'),
                               const Spacer(),
-                              Text(state.shippingCost.toStringAsFixed(2)),
+                              Text(state.shippingCost.toVND()),
                             ],
                           ),
                           const Divider(),
@@ -138,7 +184,7 @@ class _PaymentPageContent extends StatelessWidget {
                             children: [
                               const Text('Total'),
                               const Spacer(),
-                              Text(state.total.toStringAsFixed(2)),
+                              Text(state.total.toVND()),
                             ],
                           ),
                           const SizedBox(height: 30),
@@ -194,13 +240,13 @@ class _PaymentPageContent extends StatelessWidget {
                         Row(
                           children: [
                             Text(
-                              'Total (${listProduct.length} products)',
+                              'Total (${widget.listProduct.length} products)',
                               style: Theme.of(context).textTheme.titleMedium!
                                   .copyWith(fontWeight: FontWeight.bold),
                             ),
                             const Spacer(),
                             Text(
-                              state.total.toStringAsFixed(2),
+                              '${state.total.toVND()} đ',
                               style: Theme.of(context).textTheme.titleMedium!
                                   .copyWith(fontWeight: FontWeight.bold),
                             ),
@@ -213,9 +259,6 @@ class _PaymentPageContent extends StatelessWidget {
                             onPressed:
                                 state.selectedPaymentMethod != null
                                     ? () {
-                                      const uuid = Uuid();
-                                      final orderId = uuid.v4();
-
                                       // Convert PaymentType to string
                                       String paymentMethodString =
                                           state.selectedPaymentMethod!.name;
@@ -223,8 +266,10 @@ class _PaymentPageContent extends StatelessWidget {
                                       context.read<PaymentBloc>().add(
                                         ProcessPayment(
                                           orderId: orderId,
+                                          address: widget.address,
                                           amount: state.total,
                                           paymentMethod: paymentMethodString,
+                                          items: widget.listProduct,
                                         ),
                                       );
                                     }

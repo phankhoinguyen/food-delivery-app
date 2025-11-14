@@ -6,6 +6,7 @@ import 'package:food_delivery/features/auth/presentation/pages/auth_page.dart';
 import 'package:food_delivery/features/setting/profile/data/profile_repo_firestore.dart';
 import 'package:food_delivery/features/setting/profile/presentation/cubits/profile_cubits.dart';
 import 'package:food_delivery/pages/main_page.dart';
+import 'package:food_delivery/pages/splash_screen.dart';
 
 class AuthGate extends StatelessWidget {
   const AuthGate({super.key});
@@ -21,9 +22,10 @@ class AuthGate extends StatelessWidget {
             create: (context) => ProfileCubits(profileRepo)..getUserProfile(),
             child: const MainPage(),
           );
+        } else if (state is Unauthenticated) {
+          return const AuthPage();
         }
-
-        return const AuthPage();
+        return const SplashScreen();
       },
       listener: (context, state) {
         if (state is AuthError) {

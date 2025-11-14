@@ -9,6 +9,10 @@ class CartRepoFirestore implements CartRepo {
   CartRepoFirestore(this.user);
   @override
   Future<void> addToCart(CartModel item) async {
+    await _db.collection('cart').doc(user.uid).set({
+      'userId': user.uid,
+      'updatedAt': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
     await _db
         .collection('cart')
         .doc(user.uid)

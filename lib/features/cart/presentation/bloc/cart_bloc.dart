@@ -2,7 +2,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:food_delivery/features/cart/domain/repo/cart_repo.dart';
 import 'package:food_delivery/features/cart/presentation/bloc/cart_event.dart';
 import 'package:food_delivery/features/cart/presentation/bloc/cart_state.dart';
-import 'package:food_delivery/features/setting/address/presentation/pages/address_page.dart';
 
 class CartBloc extends Bloc<CartEvent, CartState> {
   final CartRepo cartRepo;
