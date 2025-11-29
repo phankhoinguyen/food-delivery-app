@@ -9,6 +9,22 @@ workflows:
         FLUTTER_BUILD_MODE: release
 
     scripts:
+      - name: Create .env file
+        script: |
+          echo "--- TẠO FILE .ENV ---"
+          cat > .env << EOF
+          GOOGLE_API_KEY=${GOOGLE_API_KEY}
+          GOOGLE_MAPS_API_KEY=${GOOGLE_MAPS_API_KEY}
+          DEFAULT_LAT=10.8231
+          DEFAULT_LNG=106.6297
+          BASE_URL=${BASE_URL}
+          BASE_URL_DEV=${BASE_URL_DEV}
+          EOF
+          echo "File .env đã được tạo"
+          # Verify (không in ra giá trị thật)
+          echo "Kiểm tra file .env có tồn tại:"
+          ls -la .env
+
       - name: Clean and Pub Get
         script: |
           echo "--- BẮT ĐẦU CLEAN VÀ GET PUB ---"
@@ -80,4 +96,3 @@ workflows:
 
     artifacts:
       - build/**/final_app.ipa
-
