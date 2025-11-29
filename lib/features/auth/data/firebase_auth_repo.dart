@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:food_delivery/core/injection/injection.dart';
 import 'package:food_delivery/features/auth/domain/entities/app_user.dart';
 import 'package:food_delivery/features/auth/domain/repo/auth_repo.dart';
 import 'package:food_delivery/features/setting/address/presentation/pages/address_page.dart';
@@ -35,6 +37,7 @@ class FirebaseAuthRepo implements AuthRepo {
 
       final token = await userCredential.user!.getIdToken();
       logger.w(token);
+      await handleDeviceToken(userCredential.user!.uid);
       return AppUser(uid: userCredential.user!.uid, email: email, name: '');
     } on FirebaseAuthException catch (e) {
       throw Exception(e.message);
@@ -66,6 +69,28 @@ class FirebaseAuthRepo implements AuthRepo {
 
   @override
   Future<void> logout() async {
-    await _auth.signOut();
+    final userId = _auth.currentUser?.uid;
+    await _auth.signOut().whenComplete(() {
+      removeDeviceToken(userId!);
+    });
+  }
+
+  Future<void> handleDeviceToken(String uid) async {
+    final firebaseMessaging = getIt<FirebaseMessaging>();
+    String? token = await firebaseMessaging.getToken();
+    if (token != null) {
+      await FirebaseFirestore.instance.collection('user').doc(uid).update({
+        'deviceTokens': FieldValue.arrayUnion([token]),
+      });
+    }
+  }
+
+  Future<void> removeDeviceToken(String uid) async {
+    String? token = await FirebaseMessaging.instance.getToken();
+    if (token != null) {
+      await FirebaseFirestore.instance.collection('users').doc(uid).update({
+        'deviceTokens': FieldValue.arrayRemove([token]),
+      });
+    }
   }
 }

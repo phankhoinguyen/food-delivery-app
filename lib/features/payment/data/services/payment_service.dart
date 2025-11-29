@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:food_delivery/core/constants/api_constants.dart';
-import 'package:food_delivery/core/injection/injection.dart';
 import 'package:food_delivery/features/payment/domain/entities/payment_status.dart';
 import 'package:food_delivery/features/setting/address/presentation/pages/address_page.dart';
 import 'package:http/http.dart' as http;
@@ -15,17 +13,14 @@ class PaymentService {
   final baseUrl = ApiConstants.baseUrl;
   final auth = FirebaseAuth.instance.currentUser;
   final http.Client _httpClient;
-  final firebaseMessaging = getIt<FirebaseMessaging>();
   PaymentService(this._httpClient);
 
   /// Process MoMo payment
   Future<PaymentResponse> processMoMoPayment(PaymentRequest request) async {
     try {
-      final notificationUserToken = await firebaseMessaging.getToken();
       final token = await auth!.getIdToken();
       final headers = ApiConstants.authHeaders(token ?? '');
       final body = request.toJson();
-      body['userToken'] = notificationUserToken;
       final response = await _httpClient.post(
         Uri.parse('$baseUrl/api/payment/momo'),
         headers: headers,

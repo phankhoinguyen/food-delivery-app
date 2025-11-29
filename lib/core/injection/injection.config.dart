@@ -11,6 +11,8 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:firebase_auth/firebase_auth.dart' as _i59;
 import 'package:firebase_messaging/firebase_messaging.dart' as _i892;
+import 'package:flutter_local_notifications/flutter_local_notifications.dart'
+    as _i163;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:http/http.dart' as _i519;
 import 'package:injectable/injectable.dart' as _i526;
@@ -57,6 +59,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i519.Client>(() => registerModule.httpClient);
     gh.lazySingleton<_i892.FirebaseMessaging>(() => registerModule.mess);
     gh.lazySingleton<_i59.FirebaseAuth>(() => registerModule.auth);
+    gh.lazySingleton<_i163.FlutterLocalNotificationsPlugin>(
+      () => registerModule.localNoti,
+    );
     gh.lazySingleton<_i516.CategoryRepo>(() => _i457.CategoryRepoFirestore());
     gh.lazySingleton<_i292.AddressPageRepo>(() => _i715.IAddressPageRepo());
     gh.lazySingleton<_i384.AddressRepo>(
@@ -70,11 +75,14 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i170.AuthRepo>(() => _i420.FirebaseAuthRepo());
     gh.lazySingleton<_i989.OrderRepo>(() => _i491.OrderRepoImpl());
-    gh.lazySingleton<_i941.NotificationService>(
-      () => _i941.NotificationService(gh<_i892.FirebaseMessaging>()),
-    );
     gh.factory<_i826.PaymentService>(
       () => _i826.PaymentService(gh<_i519.Client>()),
+    );
+    gh.lazySingleton<_i941.NotificationService>(
+      () => _i941.NotificationService(
+        gh<_i892.FirebaseMessaging>(),
+        gh<_i163.FlutterLocalNotificationsPlugin>(),
+      ),
     );
     gh.lazySingleton<_i50.PaymentRepo>(
       () => _i630.PaymentRepoImpl(

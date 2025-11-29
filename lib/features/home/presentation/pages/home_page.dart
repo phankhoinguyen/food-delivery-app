@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:food_delivery/core/constants/helper.dart';
 import 'package:food_delivery/features/auth/presentation/cubits/auth_cubits.dart';
 import 'package:food_delivery/features/cart/presentation/bloc/cart_bloc.dart';
 import 'package:food_delivery/features/favorite/data/favorite_repo_firestore.dart';
@@ -421,7 +422,7 @@ class _HomePageState extends State<HomePage> {
                 child: Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
                         color:
                             selectedCategory == listCategory[index].name
@@ -430,9 +431,9 @@ class _HomePageState extends State<HomePage> {
                         shape: BoxShape.circle,
                       ),
                       child: CachedNetworkImage(
-                        width: 20,
-                        height: 20,
-                        fit: BoxFit.contain,
+                        width: 40,
+                        height: 40,
+                        fit: BoxFit.cover,
                         imageUrl: listCategory[index].image,
                         placeholder:
                             (context, url) => const CircularProgressIndicator(),
@@ -440,9 +441,9 @@ class _HomePageState extends State<HomePage> {
                             (context, url, error) => const Icon(Icons.error),
                       ),
                     ),
-                    const SizedBox(width: 15),
+                    const SizedBox(width: 10),
                     Text(
-                      listCategory[index].name,
+                      listCategory[index].name.capitalize(),
                       style: Theme.of(
                         context,
                       ).textTheme.headlineLarge!.copyWith(
