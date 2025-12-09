@@ -14,6 +14,10 @@ class AuthGate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AuthCubits, AuthState>(
+      buildWhen: (previous, current) {
+        if (current is AuthLoading) return false;
+        return true;
+      },
       builder: (context, state) {
         if (state is Authenticated) {
           final user = state.user;

@@ -54,12 +54,6 @@ class _MainPageState extends State<MainPage> {
           create: (context) => CartBloc(cartRepo: cartRepo)..add(GetCartList()),
         ),
         BlocProvider(create: (context) => OrderBloc(getIt<OrderRepo>())),
-        BlocProvider(
-          create:
-              (context) =>
-                  getIt<NotificationBloc>()
-                    ..add(const GetUnreadNotificationsCount()),
-        ),
       ],
       child: Scaffold(
         body: listBody[currentIndex],

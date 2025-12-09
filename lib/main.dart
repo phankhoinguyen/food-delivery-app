@@ -7,6 +7,8 @@ import 'package:food_delivery/core/injection/injection.dart';
 import 'package:food_delivery/core/services/notification_service.dart';
 import 'package:food_delivery/features/auth/domain/repo/auth_repo.dart';
 import 'package:food_delivery/features/auth/presentation/pages/auth_gate.dart';
+import 'package:food_delivery/features/notification/presentation/bloc/notification_bloc.dart';
+import 'package:food_delivery/features/notification/presentation/bloc/notification_event.dart';
 import 'package:food_delivery/features/setting/address/domain/repo/add_address_repo.dart';
 import 'package:food_delivery/features/setting/address/domain/repo/address_page_repo.dart';
 import 'package:food_delivery/features/setting/address/presentation/bloc/add_address/add_address_bloc.dart';
@@ -49,6 +51,12 @@ void main() async {
           create:
               (context) =>
                   AddressPageCubits(addressrepo: getIt<AddressPageRepo>()),
+        ),
+        BlocProvider(
+          create:
+              (context) =>
+                  getIt<NotificationBloc>()
+                    ..add(const GetUnreadNotificationsCount()),
         ),
       ],
       child: const MyApp(),
